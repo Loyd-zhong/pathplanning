@@ -17,12 +17,16 @@ public class Path {
     }
 
     public void addNode(Node node) {
-        nodes.add(node);
-        costs.add(0.0);  // 默认成本为0
+        Node newNode = new Node(node.getX(), node.getY(), node.getId());
+        newNode.setArrivalTime(node.getArrivalTime());  // 保留到达时间
+        nodes.add(newNode);
+        costs.add(0.0);
     }
 
     public void addNode(Node node, double cost) {
-        nodes.add(node);
+        Node newNode = new Node(node.getX(), node.getY(), node.getId());
+        newNode.setArrivalTime(node.getArrivalTime());  // 保留到达时间
+        nodes.add(newNode);
         costs.add(cost);
     }
 

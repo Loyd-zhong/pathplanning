@@ -57,4 +57,16 @@ public class Graph {
                 .distinct()
                 .collect(Collectors.toList());
     }
+
+    public void removeNode(Node node) {
+        adjacencyList.remove(node);
+        nodeMap.remove(node.getId());
+        // 移除与该节点相关的所有边
+        adjacencyList.values().forEach(edgeSet -> edgeSet.removeIf(edge -> 
+            edge.getFrom().equals(node) || edge.getTo().equals(node)));
+    }
+
+    /*public void addNode(Node node) {
+        nodes.add(node);
+    }*/
 }

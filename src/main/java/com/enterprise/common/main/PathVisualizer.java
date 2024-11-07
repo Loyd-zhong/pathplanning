@@ -8,7 +8,7 @@ import com.enterprise.common.models.*;
 import com.enterprise.common.utils.MapLoader;
 import com.enterprise.common.utils.DatabaseInitializer;
 import com.enterprise.common.utils.DatabaseConnection;
-
+import com.enterprise.common.algorithms.ConflictDetector;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -35,6 +35,7 @@ public class PathVisualizer extends JPanel {
     private double translateX = 0;
     private double translateY = 0;
     private Point lastMousePosition;
+    private NetworkState networkState;  // 声明为类成员变量
 
     public PathVisualizer() {
         String xmlFilePath = "src/main/java/com/enterprise/common/resources/真实版本.xml"; // 请确保路径正确
@@ -116,52 +117,90 @@ public class PathVisualizer extends JPanel {
 
     // 初始化 AGV 的任务和路径
     private void initializeTasks() {
-        Color[] colors = {Color.RED, Color.GREEN, Color.BLUE};
-        NetworkState networkState = new NetworkState();
-
-        List<Node[]> tasks = new ArrayList<>();
-        Node initialNode = graph.getNodeById("263");
-        Node targetNode = graph.getNodeById("524");
-        tasks.add(new Node[]{initialNode, targetNode});
-        for (int i = 0; i < tasks.size(); i++) {
-            Node startNode = tasks.get(i)[0];
-            Node goalNode = tasks.get(i)[1];
-
-            List<Path> paths = calculateMultiplePaths(startNode, goalNode);
+        Color[] colors = {Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE};
+        List<AGV> tempAGVs = new ArrayList<>();
+        // 创建4个AGV的起终点对，确保路径会相交
+        Node[][] tasks = {
+            {graph.getNodeById("263"), graph.getNodeById("524")},  // AGV1: 经过中心区域
+            {graph.getNodeById("265"), graph.getNodeById("673")},  // AGV2: 与AGV1交叉
+            {graph.getNodeById("267"), graph.getNodeById("768")},  // AGV3: 同样经过中心区域
+            {graph.getNodeById("269"), graph.getNodeById("270")}   // AGV4: 与其他AGV共享部分路径
+        };
+        
+        /*for (int i = 0; i < tasks.length; i++) {
+            List<Path> paths = calculateMultiplePaths(tasks[i][0], tasks[i][1]);
             if (!paths.isEmpty()) {
-                AGV agv = new AGV(paths, colors[i % colors.length], graph, new TimeWindowManager(), networkState, AGV.AGVType.TYPE_A);
-                
-                // 设置速度级别
-                agv.setSpeedLevel(i <= 2 ? AGV.SpeedLevel.SLOW : AGV.SpeedLevel.NORMAL);
-                
-                // 更新到达时间
+                AGV agv = new AGV(paths, colors[i], graph, new TimeWindowManager(), 
+                                this.networkState, AGV.AGVType.TYPE_A);
+                agv.setSpeedLevel(AGV.SpeedLevel.NORMAL);
                 agv.updateArrivalTimes();
-                
-                // 预先记录路径
                 agv.preRecordPath();
-                
-                // 启动AGV
                 agv.start(this::repaint);
-                
                 agvs.add(agv);
-            } else {
-                System.out.println("No valid path found for task.");
+                
+                // 缩短延迟以增加冲突概率
+                try {
+                    Thread.sleep(200);  // 只延迟200毫秒
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }*/
+        for (int i = 0; i < tasks.length; i++) {
+            List<Path> paths = calculateMultiplePaths(tasks[i][0], tasks[i][1]);
+            if (!paths.isEmpty()) {
+                AGV agv = new AGV(paths, colors[i], graph, new TimeWindowManager(), 
+                                this.networkState, AGV.AGVType.TYPE_A);
+                agv.setSpeedLevel(AGV.SpeedLevel.NORMAL);
+                agv.updateArrivalTimes();
+                agv.preRecordPath();  // 预先记录路径
+                tempAGVs.add(agv);
             }
         }
+        for (AGV agv : tempAGVs) {
+            try {
+                Path resolvedPath = ConflictDetector.detectAndResolveConflicts(
+                    agv.getCurrentPath(), graph, new AStarPathfinder());
+                if (resolvedPath != null) {
+                    agv.updatePath(resolvedPath);
+                    agv.start(this::repaint);
+                    agvs.add(agv);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("已创建 " + agvs.size() + " 个AGV，预期会产生路径冲突");
     }
 
     // 使用 AStarPathfinder 计算路径
     private List<Path> calculateMultiplePaths(Node start, Node goal) {
         AStarPathfinder pathfinder = new AStarPathfinder();
         List<Path> paths = new ArrayList<>();
+        
         // 计算主路径
         Path primaryPath = pathfinder.findPath(graph, start, goal);
         System.out.println("Starting node: " + start + ", Goal node: " + goal);
+        
         if (primaryPath != null) {
-            paths.add(primaryPath); // 添加主路径
+            try {
+                // 进行冲突检测和解决
+                Path resolvedPath = ConflictDetector.detectAndResolveConflicts(primaryPath, graph, pathfinder);
+                paths.add(resolvedPath);
+            } catch (SQLException e) {
+                System.err.println("冲突检测过程中发生错误: " + e.getMessage());
+                e.printStackTrace();
+                // 如果发生错误，使用原始路径
+                paths.add(primaryPath);
+            }
         }
-        // 可以添加备用路径的逻辑，这里仅添加一个主路径
-        // 以添加备用路径的逻辑，这里仅添加一个主路径
+        
         return paths;
     }
 

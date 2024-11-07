@@ -5,8 +5,9 @@ import com.enterprise.common.algorithms.AStarPathfinder;
 import com.enterprise.common.algorithms.TimeWindowManager;
 import com.enterprise.common.dao.PathDAO;
 import com.enterprise.common.dao.VehiclePassageDAO;
-
+import com.enterprise.common.algorithms.ConflictDetector;
 import java.awt.*;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -120,7 +121,19 @@ public class AGV {
 
     public AGV(List<Path> paths, Color color, Graph graph, TimeWindowManager timeWindowManager, NetworkState networkState, AGVType type) {
         this.paths = paths;
-        this.currentPath = paths.get(0);
+        if (!paths.isEmpty()) {
+            // 确保路径中的所有节点都有时间信息
+            LocalDateTime startTime = LocalDateTime.now();
+            for (Path path : paths) {
+                for (Node node : path.getNodes()) {
+                    if (node.getArrivalTime() == null) {
+                        node.setArrivalTime(startTime);
+                        startTime = startTime.plusSeconds(5); // 每个节点间隔5秒
+                    }
+                }
+            }
+            this.currentPath = paths.get(0);
+        }
         this.color = color;
         this.graph = graph;
         this.timeWindowManager = timeWindowManager;
@@ -319,6 +332,14 @@ public class AGV {
                     );
                 }
             }
+        }
+    }
+
+    public void updatePath(Path newPath) {
+        if (newPath != null) {
+            this.paths = List.of(newPath);
+            this.currentPath = newPath;
+            updateArrivalTimes();
         }
     }
 }

@@ -9,6 +9,7 @@ public class Node {
     private double y;
     private String id; // 新添加的 id 属性
     private LocalDateTime arrivalTime;
+    private LocalDateTime departureTime;
 
     public Node(double x, double y, String id) {
         this.x = x;
@@ -43,6 +44,14 @@ public class Node {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public LocalDateTime getDepartureTime() {
+        return departureTime;
+    }
+
+    public void setDepartureTime(LocalDateTime departureTime) {
+        this.departureTime = departureTime;
     }
 
     @Override
