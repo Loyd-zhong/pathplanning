@@ -1,5 +1,6 @@
 package com.enterprise.common.models;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,13 +13,33 @@ public class Path {
         this.costs = new ArrayList<>();
     }
 
+    public Path(List<Node> nodes) {
+        this.nodes = new ArrayList<>();
+        this.costs = new ArrayList<>();
+        
+        // 复制所有节点并初始化对应的成本
+        for (Node node : nodes) {
+            Node newNode = new Node(node.getX(), node.getY(), node.getId());
+            newNode.setArrivalTime(node.getArrivalTime());
+            this.nodes.add(newNode);
+            this.costs.add(0.0);
+        }
+    }
+
     public List<Node> getNodes() {
         return nodes;
     }
 
     public void addNode(Node node) {
         Node newNode = new Node(node.getX(), node.getY(), node.getId());
-        newNode.setArrivalTime(node.getArrivalTime());  // 保留到达时间
+        if (node.getArrivalTime() == null) {
+            LocalDateTime now = LocalDateTime.now();
+            newNode.setArrivalTime(now);
+            newNode.setDepartureTime(now.plusSeconds(5));
+        } else {
+            newNode.setArrivalTime(node.getArrivalTime());
+            newNode.setDepartureTime(node.getDepartureTime());
+        }
         nodes.add(newNode);
         costs.add(0.0);
     }

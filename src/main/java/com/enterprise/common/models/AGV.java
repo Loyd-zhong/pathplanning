@@ -5,7 +5,7 @@ import com.enterprise.common.algorithms.AStarPathfinder;
 import com.enterprise.common.algorithms.TimeWindowManager;
 import com.enterprise.common.dao.PathDAO;
 import com.enterprise.common.dao.VehiclePassageDAO;
-import com.enterprise.common.algorithms.ConflictDetector;
+import com.enterprise.common.algorithms.ConflictManager;
 import java.awt.*;
 import java.sql.SQLException;
 import java.time.Duration;
@@ -52,39 +52,42 @@ public class AGV {
     }
 
     // AGV.java
-    public void updateArrivalTimes() {
-        if (currentPath == null || currentPath.getNodes().isEmpty()) {
-            return;
-        }
-
-        double speed = speedLevel.getSpeed();
-        LocalDateTime arrivalTime = LocalDateTime.now();
-
-        List<Node> nodes = currentPath.getNodes();
-        nodes.get(0).setArrivalTime(arrivalTime);
-
-        for (int i = 1; i < nodes.size(); i++) {
-            Node previousNode = nodes.get(i - 1);
-            Node currentNode = nodes.get(i);
-
-            Edge edge = getEdgeBetweenNodes(previousNode, currentNode);
-            double distance = edge.getLength();
-            double travelTimeInSeconds = distance / speed;
-
-            // 检测转弯
-            if (i < nodes.size() - 1) {
-                Node nextNode = nodes.get(i + 1);
-                if (isTurn(previousNode, currentNode, nextNode)) {
-                    travelTimeInSeconds += getTurnTime();
-                    System.out.printf("在节点 %s 进行转弯，到达节点 %s 预计时间增加 %.1f 秒。%n", 
-                                      currentNode.getId(), nextNode.getId(), getTurnTime());
-                }
+    public void updateArrivalTimes(Path path) {
+        LocalDateTime currentTime = LocalDateTime.now();
+        for (int i = 0; i < path.getNodes().size() - 1; i++) {
+            Node currentNode = path.getNodes().get(i);
+            Node nextNode = path.getNodes().get(i + 1);
+            Edge edge = getEdgeBetweenNodes(currentNode, nextNode);
+            
+            // 如果找不到边，计算直线距离
+            double distance;
+            if (edge == null) {
+                distance = Math.sqrt(
+                    Math.pow(nextNode.getX() - currentNode.getX(), 2) +
+                    Math.pow(nextNode.getY() - currentNode.getY(), 2)
+                );
+                System.out.println("警告：节点 " + currentNode.getId() + 
+                                 " 到节点 " + nextNode.getId() + " 之间没有边，使用直线距离: " + distance);
+            } else {
+                distance = edge.getLength();
             }
-
-            Duration duration = Duration.ofMillis((long) (travelTimeInSeconds * 1000));
-            arrivalTime = arrivalTime.plus(duration);
-
-            currentNode.setArrivalTime(arrivalTime);
+            
+            // 计算时间
+            double timeNeeded = calculateTimeNeeded(distance, speedLevel.getSpeed());
+            if (i == 0) {
+                currentNode.setArrivalTime(currentTime);
+                currentNode.setDepartureTime(currentTime.plusSeconds((long)timeNeeded));
+            } else {
+                currentNode.setArrivalTime(path.getNodes().get(i-1).getDepartureTime());
+                currentNode.setDepartureTime(currentNode.getArrivalTime().plusSeconds((long)timeNeeded));
+            }
+        }
+        
+        // 设置最后一个节点的时间
+        if (!path.getNodes().isEmpty()) {
+            Node lastNode = path.getNodes().get(path.getNodes().size() - 1);
+            lastNode.setArrivalTime(path.getNodes().get(path.getNodes().size() - 2).getDepartureTime());
+            lastNode.setDepartureTime(lastNode.getArrivalTime().plusSeconds(5));
         }
     }
 
@@ -246,7 +249,7 @@ public class AGV {
     public void start(Runnable onUpdate) {
         this.onUpdate = onUpdate;
         if (currentPath != null && !currentPath.getNodes().isEmpty()) {
-            updateArrivalTimes();
+            updateArrivalTimes(currentPath);
             PathLogger.logPath(currentPath);
             currentNode = currentPath.getNodes().get(0);
             nextNodeIndex = 1;
@@ -303,35 +306,25 @@ public class AGV {
             return;
         }
         
-        List<Node> nodes = currentPath.getNodes();
-        
-        // 遍历所有节点和边
-        for (int i = 0; i < nodes.size(); i++) {
-            Node currentNode = nodes.get(i);
+        try {
+            // 使用 ConflictManager 进行路径验证和记录
+            PathResolution resolution = ConflictManager.resolvePath(
+                currentPath,
+                "AGV-" + hashCode(),
+                graph,
+                new AStarPathfinder()
+            );
             
-            // 记录节点通过
-            if (i < nodes.size() - 1) {
-                Node nextNode = nodes.get(i + 1);
-                
-                // 记录节点
-                vehiclePassageDAO.recordNodePassage(
-                    "AGV-" + hashCode(),
-                    currentNode,
-                    currentNode.getArrivalTime(),
-                    nextNode.getArrivalTime()
-                );
-                
-                // 记录边
-                Edge currentEdge = getEdgeBetweenNodes(currentNode, nextNode);
-                if (currentEdge != null) {
-                    vehiclePassageDAO.recordEdgePassage(
-                        "AGV-" + hashCode(),
-                        currentEdge,
-                        currentNode.getArrivalTime(),
-                        nextNode.getArrivalTime()
-                    );
-                }
+            if (resolution.getStatus() == PathResolutionStatus.SUCCESS) {
+                currentPath = resolution.getPath();
+                System.out.println("AGV-" + hashCode() + " 路径预记录成功");
+            } else {
+                System.err.println("AGV-" + hashCode() + " 路径预记录失败: " + 
+                                 resolution.getStatus().getDescription());
             }
+        } catch (Exception e) {
+            System.err.println("路径预记录过程中发生错误: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -339,7 +332,11 @@ public class AGV {
         if (newPath != null) {
             this.paths = List.of(newPath);
             this.currentPath = newPath;
-            updateArrivalTimes();
+            updateArrivalTimes(currentPath);
         }
+    }
+
+    private double calculateTimeNeeded(double distance, double speed) {
+        return distance / speed;
     }
 }

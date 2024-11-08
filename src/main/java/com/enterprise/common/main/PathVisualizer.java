@@ -8,7 +8,7 @@ import com.enterprise.common.models.*;
 import com.enterprise.common.utils.MapLoader;
 import com.enterprise.common.utils.DatabaseInitializer;
 import com.enterprise.common.utils.DatabaseConnection;
-import com.enterprise.common.algorithms.ConflictDetector;
+import com.enterprise.common.algorithms.ConflictManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -37,9 +37,10 @@ public class PathVisualizer extends JPanel {
     private Point lastMousePosition;
     private NetworkState networkState;  // 声明为类成员变量
 
-    public PathVisualizer() {
-        String xmlFilePath = "src/main/java/com/enterprise/common/resources/真实版本.xml"; // 请确保路径正确
-        this.graph = MapLoader.loadMap(xmlFilePath); // 创建图形对象并初始化节点和边
+    public PathVisualizer(NetworkState networkState) {
+        this.networkState = networkState;
+        String xmlFilePath = "src/main/java/com/enterprise/common/resources/真实版本.xml";
+        this.graph = MapLoader.loadMap(xmlFilePath);
 
         try {
             // 只创建表结构，不初始化数据
@@ -152,21 +153,28 @@ public class PathVisualizer extends JPanel {
                 AGV agv = new AGV(paths, colors[i], graph, new TimeWindowManager(), 
                                 this.networkState, AGV.AGVType.TYPE_A);
                 agv.setSpeedLevel(AGV.SpeedLevel.NORMAL);
-                agv.updateArrivalTimes();
-                agv.preRecordPath();  // 预先记录路径
+                agv.updateArrivalTimes(agv.getCurrentPath());
+                agv.preRecordPath();
                 tempAGVs.add(agv);
             }
         }
         for (AGV agv : tempAGVs) {
             try {
-                Path resolvedPath = ConflictDetector.detectAndResolveConflicts(
-                    agv.getCurrentPath(), graph, new AStarPathfinder());
-                if (resolvedPath != null) {
-                    agv.updatePath(resolvedPath);
+                PathResolution resolution = ConflictManager.resolvePath(
+                    agv.getCurrentPath(),
+                    "AGV-" + agv.hashCode(),
+                    graph,
+                    new AStarPathfinder()
+                );
+                
+                if (resolution.getStatus() == PathResolutionStatus.SUCCESS) {
+                    agv.updatePath(resolution.getPath());
                     agv.start(this::repaint);
                     agvs.add(agv);
+                } else {
+                    System.err.println("AGV路径冲突解决失败: " + resolution.getStatus().getDescription());
                 }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             
@@ -184,19 +192,28 @@ public class PathVisualizer extends JPanel {
         AStarPathfinder pathfinder = new AStarPathfinder();
         List<Path> paths = new ArrayList<>();
         
-        // 计算主路径
         Path primaryPath = pathfinder.findPath(graph, start, goal);
         System.out.println("Starting node: " + start + ", Goal node: " + goal);
         
         if (primaryPath != null) {
             try {
-                // 进行冲突检测和解决
-                Path resolvedPath = ConflictDetector.detectAndResolveConflicts(primaryPath, graph, pathfinder);
-                paths.add(resolvedPath);
-            } catch (SQLException e) {
+                // 使用 ConflictManager 替代 ConflictDetector
+                PathResolution resolution = ConflictManager.resolvePath(
+                    primaryPath, 
+                    "AGV-" + System.currentTimeMillis(), 
+                    graph, 
+                    pathfinder
+                );
+                
+                if (resolution.getStatus() == PathResolutionStatus.SUCCESS) {
+                    paths.add(resolution.getPath());
+                } else {
+                    System.err.println("路径冲突解决失败: " + resolution.getStatus().getDescription());
+                    paths.add(primaryPath); // 如果解决失败，使用原始路径
+                }
+            } catch (Exception e) {
                 System.err.println("冲突检测过程中发生错误: " + e.getMessage());
                 e.printStackTrace();
-                // 如果发生错误，使用原始路径
                 paths.add(primaryPath);
             }
         }
@@ -328,7 +345,8 @@ public class PathVisualizer extends JPanel {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Pathfinding Visualization");
-        PathVisualizer visualizer = new PathVisualizer();
+        NetworkState networkState = new NetworkState(); // 创建新的NetworkState实例
+        PathVisualizer visualizer = new PathVisualizer(networkState);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(visualizer);

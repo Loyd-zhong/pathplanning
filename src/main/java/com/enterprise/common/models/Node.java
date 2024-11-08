@@ -4,7 +4,7 @@ package com.enterprise.common.models;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Node {
+public class Node implements Cloneable {
     private double x;
     private double y;
     private String id; // 新添加的 id 属性
@@ -15,6 +15,8 @@ public class Node {
         this.x = x;
         this.y = y;
         this.id = id;
+        this.arrivalTime = LocalDateTime.now();
+        this.departureTime = arrivalTime.plusSeconds(5);
     }
 
     public Node(double x, double y) {
@@ -70,5 +72,22 @@ public class Node {
     @Override
     public String toString() {
         return "(" + x + ", " + y + (arrivalTime != null ? " at " + arrivalTime : "") + ")";
+    }
+
+    @Override
+    public Node clone() {
+        try {
+            Node cloned = (Node) super.clone();
+            // 深度复制时间对象
+            if (this.arrivalTime != null) {
+                cloned.arrivalTime = LocalDateTime.from(this.arrivalTime);
+            }
+            if (this.departureTime != null) {
+                cloned.departureTime = LocalDateTime.from(this.departureTime);
+            }
+            return cloned;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("克隆Node对象失败", e);
+        }
     }
 }

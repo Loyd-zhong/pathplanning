@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class Graph {
+public class Graph implements Cloneable {
     private Map<Node, Set<Edge>> adjacencyList;
     private Map<String, Node> nodeMap; // 新增一个用于存储 Node 的 id 和 Node 之间的映射
 
@@ -66,7 +66,39 @@ public class Graph {
             edge.getFrom().equals(node) || edge.getTo().equals(node)));
     }
 
+    public void removeNodeAndEdges(Node node) {
+        adjacencyList.remove(node);
+        nodeMap.remove(node.getId());
+        // 移除与该节点相关的所有边
+        adjacencyList.values().forEach(edgeSet -> 
+            edgeSet.removeIf(edge -> edge.getFrom().equals(node) || edge.getTo().equals(node)));
+    }
+
     /*public void addNode(Node node) {
         nodes.add(node);
     }*/
+
+    @Override
+    public Graph clone() {
+        Graph cloned = new Graph();
+        
+        // 复制所有节点
+        for (Node node : this.getNodes()) {
+            Node clonedNode = node.clone();
+            cloned.addNode(clonedNode);
+        }
+        
+        // 复制所有边
+        for (Edge edge : this.getEdges()) {
+            Node fromNode = cloned.getNodeById(edge.getFrom().getId());
+            Node toNode = cloned.getNodeById(edge.getTo().getId());
+            if (edge.isCurved()) {
+                cloned.addCurvedEdge(fromNode, toNode);
+            } else {
+                cloned.addEdge(fromNode, toNode, edge.getLength(), 1.0); // 使用默认权重 1.0
+            }
+        }
+        
+        return cloned;
+    }
 }
