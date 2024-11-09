@@ -39,7 +39,7 @@ public class PathVisualizer extends JPanel {
 
     public PathVisualizer(NetworkState networkState) {
         this.networkState = networkState;
-        String xmlFilePath = "src/main/java/com/enterprise/common/resources/真实版本.xml";
+        String xmlFilePath = "D:/AGV规划系统（4.25启动）/第三方文件/try.xml";
         this.graph = MapLoader.loadMap(xmlFilePath);
 
         try {
@@ -122,10 +122,10 @@ public class PathVisualizer extends JPanel {
         List<AGV> tempAGVs = new ArrayList<>();
         // 创建4个AGV的起终点对，确保路径会相交
         Node[][] tasks = {
-            {graph.getNodeById("263"), graph.getNodeById("524")},  // AGV1: 经过中心区域
-            {graph.getNodeById("265"), graph.getNodeById("673")},  // AGV2: 与AGV1交叉
-            {graph.getNodeById("267"), graph.getNodeById("768")},  // AGV3: 同样经过中心区域
-            {graph.getNodeById("269"), graph.getNodeById("270")}   // AGV4: 与其他AGV共享部分路径
+            {graph.getNodeById("0"), graph.getNodeById("4")},  // AGV1: 经过中心区域
+            {graph.getNodeById("1"), graph.getNodeById("5")},  // AGV2: 与AGV1交叉
+            {graph.getNodeById("2"), graph.getNodeById("6")},  // AGV3: 同样经过中心区域
+            {graph.getNodeById("3"), graph.getNodeById("7")}   // AGV4: 与其他AGV共享部分路径
         };
         
         /*for (int i = 0; i < tasks.length; i++) {
