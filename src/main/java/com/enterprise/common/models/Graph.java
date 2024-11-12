@@ -101,4 +101,15 @@ public class Graph implements Cloneable {
         
         return cloned;
     }
+
+    public boolean hasEdge(Node node1, Node node2) {
+        Set<Edge> edges = adjacencyList.get(node1);
+        if (edges == null) {
+            return false;
+        }
+        return edges.stream().anyMatch(edge -> 
+            (edge.getFrom().equals(node1) && edge.getTo().equals(node2)) ||
+            (edge.getFrom().equals(node2) && edge.getTo().equals(node1))
+        );
+    }
 }
