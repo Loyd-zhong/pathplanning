@@ -39,7 +39,7 @@ public class PathVisualizer extends JPanel {
 
     public PathVisualizer(NetworkState networkState) {
         this.networkState = networkState;
-        String xmlFilePath = "D:/AGV规划系统（4.25启动）/第三方文件/try.xml";
+        String xmlFilePath = "D:\\AGV规划系统（4.25启动）\\第三方文件\\try.xml";
         this.graph = MapLoader.loadMap(xmlFilePath);
 
         try {

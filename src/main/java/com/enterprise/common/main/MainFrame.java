@@ -21,7 +21,7 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         // 加载地图
-        String xmlFilePath = "D:/AGV规划系统（4.25启动）/第三方文件/try.xml"; // 请确保路径正确
+        String xmlFilePath = "D:\\AGV规划系统（4.25启动）\\第三方文件\\try.xml"; // 请确保路径正确
         Graph graph = MapLoader.loadMap(xmlFilePath);
 
         // 创建 PathVisualizer 和 TaskManagerPanel
