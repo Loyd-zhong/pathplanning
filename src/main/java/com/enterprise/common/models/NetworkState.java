@@ -67,9 +67,7 @@ public class NetworkState {
     // 打印当前的路网状态（可选的调试功能）
     public void printNetworkState() {
         System.out.println("Node Pass Records:");
-        nodePassRecords.forEach((node, record) -> System.out.println(node + " -> Count: " + record.getCount() + ", Last Pass: " + record.getLastPassTime())
-
-        );
+        nodePassRecords.forEach((node, record) -> System.out.println(node + " -> Count: " + record.getCount() + ", Last Pass: " + record.getLastPassTime()));
 
         System.out.println("Edge Pass Records:");
         edgePassRecords.forEach((edge, record) ->
