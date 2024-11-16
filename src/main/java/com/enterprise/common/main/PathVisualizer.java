@@ -28,7 +28,7 @@ public class PathVisualizer extends JPanel {
 
     private static final int NODE_RADIUS = 5; // 节点的显示半径
     private List<AGV> agvs = new ArrayList<>(); // AGV列表
-    private Graph graph; // 图形结构对象
+    private Graph graph; // 图形结构对��
     private Node hoveredNode = null;  // 当前鼠标悬停的节点
     private boolean pathPrinted = false;
     private double scale = 1.0;
