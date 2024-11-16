@@ -28,7 +28,7 @@ public class PathVisualizer extends JPanel {
 
     private static final int NODE_RADIUS = 5; // 节点的显示半径
     private List<AGV> agvs = new ArrayList<>(); // AGV列表
-    private Graph graph; // 图形结构对��
+    private Graph graph; // 图形结构对
     private Node hoveredNode = null;  // 当前鼠标悬停的节点
     private boolean pathPrinted = false;
     private double scale = 1.0;
@@ -144,28 +144,8 @@ public class PathVisualizer extends JPanel {
         List<Path> paths = new ArrayList<>();
         
         Path primaryPath = pathfinder.findPath(graph, start, goal);
-        System.out.println("Starting node: " + start + ", Goal node: " + goal);
-        
         if (primaryPath != null) {
-            try {
-                PathResolution resolution = ConflictManager.resolvePath(
-                    primaryPath, 
-                    "AGV-" + System.currentTimeMillis(), 
-                    graph, 
-                    pathfinder
-                );
-                
-                if (resolution.getStatus() == PathResolutionStatus.SUCCESS) {
-                    paths.add(resolution.getPath());
-                } else {
-                    System.err.println("路径冲突解决失败: " + resolution.getStatus().getDescription());
-                    paths.add(primaryPath); // 如果解决失败，使用原始路径
-                }
-            } catch (Exception e) {
-                System.err.println("冲突检测过程中发生错误: " + e.getMessage());
-                e.printStackTrace();
-                paths.add(primaryPath);
-            }
+            paths.add(primaryPath);
         }
         
         return paths;
