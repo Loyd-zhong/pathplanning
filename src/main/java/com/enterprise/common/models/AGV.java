@@ -60,66 +60,26 @@ public class AGV {
         // 设置起点时间
         Node startNode = nodes.get(0);
         startNode.setArrivalTime(currentTime);
-        startNode.setDepartureTime(currentTime.plusSeconds(1));
+        startNode.setDepartureTime(currentTime.plusSeconds(1));  // 在起点停留1秒
+        
+        LocalDateTime nextArrivalTime = startNode.getDepartureTime();
         
         for (int i = 0; i < nodes.size() - 1; i++) {
             Node currentNode = nodes.get(i);
             Node nextNode = nodes.get(i + 1);
-            Edge edge = getEdgeBetweenNodes(currentNode, nextNode);
-            
-            // 检查是否需要转弯
-            boolean needTurn = false;
-            if (i < nodes.size() - 2) {
-                Node afterNextNode = nodes.get(i + 2);
-                needTurn = isTurn(currentNode, nextNode, afterNextNode);
-            }
-            
-            // 计算当前节点的离去时间
-            LocalDateTime nodeDepartureTime = needTurn ? 
-                currentNode.getArrivalTime().plusSeconds((long)agvType.getTurnTime()) :
-                currentNode.getArrivalTime().plusSeconds(1);
-            currentNode.setDepartureTime(nodeDepartureTime);
             
             // 计算边的通过时间
-            double distance = edge != null ? edge.getLength() : calculateDistance(currentNode, nextNode);
+            double distance = calculateDistance(currentNode, nextNode);
             double timeNeeded = calculateTimeNeeded(distance, speedLevel.getSpeed());
             
             // 设置下一个节点的到达时间
-            LocalDateTime nextNodeArrivalTime = nodeDepartureTime.plusSeconds((long)Math.ceil(timeNeeded));
-            nextNode.setArrivalTime(nextNodeArrivalTime);}
+            nextArrivalTime = nextArrivalTime.plusSeconds((long)Math.ceil(timeNeeded));
+            nextNode.setArrivalTime(nextArrivalTime);
+            nextNode.setDepartureTime(nextArrivalTime.plusSeconds(1));  // 在每个节点停留1秒
             
-            // 记录边的时间信息并保存到数据库
-            /*if (edge != null) {
-                edge.setStartTime(nodeDepartureTime);
-                edge.setEndTime(nextNodeArrivalTime);
-                // 记录边的通过信息到数据库
-                vehiclePassageDAO.recordPassage(
-                    "AGV-" + hashCode(),
-                    currentNode.getId(),
-                    null,
-                    currentNode.getArrivalTime(),
-                    currentNode.getDepartureTime()
-                );
-                String edgeId = edge.getFrom().getId() + "_" + edge.getTo().getId();
-                vehiclePassageDAO.recordPassage(
-                    "AGV-" + hashCode(),
-                    null,
-                    edgeId,
-                    nodeDepartureTime,  // 使用节点的离开时间作为边的开始时间
-                    nextNodeArrivalTime // 使用下一个节点的到达时间作为边的结束时间
-                );
-            }
-        }*/
-        
-        // 记录终点节点
-        /*Node endNode = nodes.get(nodes.size() - 1);
-        vehiclePassageDAO.recordPassage(
-            "AGV-" + hashCode(),
-            endNode.getId(),
-            null,
-            endNode.getArrivalTime(),
-            endNode.getDepartureTime()
-        );*/
+            // 更新下一段路径的开始时间
+            nextArrivalTime = nextNode.getDepartureTime();
+        }
     }
 
     private boolean isTurn(Node n1, Node n2, Node n3) {

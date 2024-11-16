@@ -1,7 +1,7 @@
 // src/pathfinding/main/PathVisualizer.java
 package com.enterprise.common.main;
 
-import com.enterprise.common.algorithms.*;
+
 import com.enterprise.common.algorithms.AStarPathfinder;
 import com.enterprise.common.algorithms.TimeWindowManager;
 import com.enterprise.common.models.*;
@@ -36,7 +36,6 @@ public class PathVisualizer extends JPanel {
     private double translateY = 0;
     private Point lastMousePosition;
     private NetworkState networkState;  // 声明为类成员变量
-    private int agvCounter = 0;
 
     public PathVisualizer(NetworkState networkState) {
         this.networkState = networkState;
@@ -128,7 +127,7 @@ public class PathVisualizer extends JPanel {
         for (int i = 0; i < tasks.length; i++) {
             List<Path> paths = calculateMultiplePaths(tasks[i][0], tasks[i][1]);
             if (!paths.isEmpty()) {
-                String agvId = "AGV-" + (++agvCounter); // 确保 agvId 被定义
+                String agvId = "AGV-" + i;  // 为每个AGV创建唯一ID
                 AGV agv = new AGV(paths, colors[i], graph, new TimeWindowManager(), 
                                 this.networkState, AGV.AGVType.TYPE_A, agvId);
                 agv.setSpeedLevel(AGV.SpeedLevel.NORMAL);
@@ -145,19 +144,22 @@ public class PathVisualizer extends JPanel {
         List<Path> paths = new ArrayList<>();
         
         Path primaryPath = pathfinder.findPath(graph, start, goal);
-        String agvId = "AGV-" + (++agvCounter);
+        System.out.println("Starting node: " + start + ", Goal node: " + goal);
         
         if (primaryPath != null) {
             try {
                 PathResolution resolution = ConflictManager.resolvePath(
                     primaryPath, 
-                    agvId,
+                    "AGV-" + System.currentTimeMillis(), 
                     graph, 
                     pathfinder
                 );
                 
                 if (resolution.getStatus() == PathResolutionStatus.SUCCESS) {
                     paths.add(resolution.getPath());
+                } else {
+                    System.err.println("路径冲突解决失败: " + resolution.getStatus().getDescription());
+                    paths.add(primaryPath); // 如果解决失败，使用原始路径
                 }
             } catch (Exception e) {
                 System.err.println("冲突检测过程中发生错误: " + e.getMessage());
