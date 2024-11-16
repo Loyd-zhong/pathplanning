@@ -17,6 +17,7 @@ import javax.swing.Timer;
 // 修改的AGV类代码
 
 public class AGV {
+    private String agvId;
     private List<Path> paths; // 存储多条路径
     private Path currentPath; // 当前使用的路径
     private Color color;
@@ -85,10 +86,10 @@ public class AGV {
             
             // 设置下一个节点的到达时间
             LocalDateTime nextNodeArrivalTime = nodeDepartureTime.plusSeconds((long)Math.ceil(timeNeeded));
-            nextNode.setArrivalTime(nextNodeArrivalTime);
+            nextNode.setArrivalTime(nextNodeArrivalTime);}
             
             // 记录边的时间信息并保存到数据库
-            if (edge != null) {
+            /*if (edge != null) {
                 edge.setStartTime(nodeDepartureTime);
                 edge.setEndTime(nextNodeArrivalTime);
                 // 记录边的通过信息到数据库
@@ -108,17 +109,17 @@ public class AGV {
                     nextNodeArrivalTime // 使用下一个节点的到达时间作为边的结束时间
                 );
             }
-        }
+        }*/
         
         // 记录终点节点
-        Node endNode = nodes.get(nodes.size() - 1);
+        /*Node endNode = nodes.get(nodes.size() - 1);
         vehiclePassageDAO.recordPassage(
             "AGV-" + hashCode(),
             endNode.getId(),
             null,
             endNode.getArrivalTime(),
             endNode.getDepartureTime()
-        );
+        );*/
     }
 
     private boolean isTurn(Node n1, Node n2, Node n3) {
@@ -152,7 +153,8 @@ public class AGV {
 
     private SpeedLevel speedLevel = SpeedLevel.NORMAL; // 默认速度档位为NORMAL
 
-    public AGV(List<Path> paths, Color color, Graph graph, TimeWindowManager timeWindowManager, NetworkState networkState, AGVType type) {
+    public AGV(List<Path> paths, Color color, Graph graph, TimeWindowManager timeWindowManager, NetworkState networkState, AGVType type, String agvId) {
+        this.agvId = agvId;
         this.paths = paths;
         if (!paths.isEmpty()) {
             // 确保路径中的所有节点都有时间信息
@@ -337,23 +339,22 @@ public class AGV {
         }
         
         try {
-            // 使用 ConflictManager 进行路径证和记录
             PathResolution resolution = ConflictManager.resolvePath(
                 currentPath,
-                "AGV-" + hashCode(),
+                this.agvId,
                 graph,
                 new AStarPathfinder()
             );
             
             if (resolution.getStatus() == PathResolutionStatus.SUCCESS) {
                 currentPath = resolution.getPath();
-                System.out.println("AGV-" + hashCode() + " 路径预记录成功");
+                System.out.println(this.agvId + " 路径预记录成功");
             } else {
-                System.err.println("AGV-" + hashCode() + " 径预记录失败: " + 
+                System.err.println(this.agvId + " 路径预记录失败: " + 
                                  resolution.getStatus().getDescription());
             }
         } catch (Exception e) {
-            System.err.println("路径预记录过程中发生错���: " + e.getMessage());
+            System.err.println("路径预记录过程中发生错误: " + e.getMessage());
             e.printStackTrace();
         }
     }

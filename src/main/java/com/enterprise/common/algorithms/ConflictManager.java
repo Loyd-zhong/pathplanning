@@ -53,19 +53,32 @@ public class ConflictManager {
             String sql = "INSERT INTO temp_vehiclepassages (vehicle_id, node_id, edge_id, arrival_time, departure_time) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 List<Node> nodes = path.getNodes();
-                for (int i = 0; i < nodes.size(); i++) {
-                    Node currentNode = nodes.get(i);
-                    Edge edge = null;
-                    if (i < nodes.size() - 1) {
-                        edge = graph.getEdge(currentNode, nodes.get(i + 1));
-                    }
-                    
+                
+                // 记录所有节点
+                for (Node node : nodes) {
                     stmt.setString(1, vehicleId);
-                    stmt.setString(2, currentNode.getId());
-                    stmt.setString(3, edge != null ? edge.getId() : null);
-                    stmt.setTimestamp(4, Timestamp.valueOf(currentNode.getArrivalTime()));
-                    stmt.setTimestamp(5, Timestamp.valueOf(currentNode.getDepartureTime()));
+                    stmt.setString(2, node.getId());
+                    stmt.setString(3, null);  // 节点记录的edge_id为null
+                    stmt.setTimestamp(4, Timestamp.valueOf(node.getArrivalTime()));
+                    stmt.setTimestamp(5, Timestamp.valueOf(node.getDepartureTime()));
                     stmt.executeUpdate();
+                }
+                
+                // 记录所有边
+                for (int i = 0; i < nodes.size() - 1; i++) {
+                    Node currentNode = nodes.get(i);
+                    Node nextNode = nodes.get(i + 1);
+                    Edge edge = graph.getEdge(currentNode, nextNode);
+                    
+                    if (edge != null) {
+                        String edgeId = currentNode.getId() + "_" + nextNode.getId();
+                        stmt.setString(1, vehicleId);
+                        stmt.setString(2, null);  // 边记录的node_id为null
+                        stmt.setString(3, edgeId);
+                        stmt.setTimestamp(4, Timestamp.valueOf(currentNode.getDepartureTime()));
+                        stmt.setTimestamp(5, Timestamp.valueOf(nextNode.getArrivalTime()));
+                        stmt.executeUpdate();
+                    }
                 }
             }
         }
