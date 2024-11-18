@@ -55,7 +55,7 @@ public class MapLoader {
                                     "0".equals(idElement.getAttribute("isLine")) : true;
                                     
                             Node neighborNode = nodeMap.get(neighborId);
-                            if (neighborNode != null && !graph.hasEdge(currentNode, neighborNode)) {
+                            if (neighborNode != null) {
                                 double distance = Double.parseDouble(
                                     neighborInfo.getElementsByTagName("distance").item(k).getTextContent()
                                 );
@@ -64,10 +64,9 @@ public class MapLoader {
                                 NodeList ctrlPoints = neighborInfo.getElementsByTagName("CtrlPoint");
                                 boolean hasCurve = ctrlPoints.getLength() > 0;
                                 
+                                // 无论是否存在边都添加，确保双向连接
                                 graph.addEdge(currentNode, neighborNode, distance, 1.0);
-                                /*System.out.println("Added edge: " + currentNode.getId() + " <-> " + 
-                                               neighborNode.getId() + " (distance: " + distance + 
-                                               ", curved: " + hasCurve + ")");*/
+                                System.out.println("Adding edge: " + currentNode.getId() + " -> " + neighborId);
                             }
                         }
                     } catch (Exception e) {

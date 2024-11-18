@@ -9,6 +9,7 @@ import com.enterprise.common.main.PathVisualizer;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import com.enterprise.common.algorithms.*;
 
 public class MainFrame extends JFrame {
     private final NetworkState networkState;

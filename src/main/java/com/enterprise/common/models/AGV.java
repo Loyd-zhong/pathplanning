@@ -330,4 +330,15 @@ public class AGV {
     private double calculateTimeNeeded(double distance, double speed) {
         return distance / speed;
     }
+
+    // 在AGV类的开头添加静态初始化块
+    static {
+        try {
+            Class.forName("com.enterprise.common.algorithms.ConflictManager");
+            System.out.println("ConflictManager类已成功加载");
+        } catch (ClassNotFoundException e) {
+            System.err.println("无法加载ConflictManager类: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }

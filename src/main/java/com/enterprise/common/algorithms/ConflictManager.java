@@ -119,7 +119,6 @@ public class ConflictManager {
     // 重新规划路径
     private static Path replanPath(Path originalPath, Set<String> unavailableNodes, 
                                  Graph graph, AStarPathfinder pathfinder) {
-        // 获取起点和终点
         Node start = originalPath.getNodes().get(0);
         Node end = originalPath.getNodes().get(originalPath.getNodes().size() - 1);
         
@@ -128,8 +127,6 @@ public class ConflictManager {
         unavailableNodes.remove(end.getId());
         
         Graph tempGraph = graph.clone();
-        
-        // 从临时图中移除不可用节点及其相关边
         for (String nodeId : unavailableNodes) {
             Node node = tempGraph.getNodeById(nodeId);
             if (node != null) {
@@ -137,7 +134,45 @@ public class ConflictManager {
             }
         }
         
-        return pathfinder.findPath(tempGraph, start, end);
+        Path newPath = pathfinder.findPath(tempGraph, start, end);
+        if (newPath != null) {
+            // 验证所有相邻节点之间是否有边连接
+            for (int i = 0; i < newPath.getNodes().size() - 1; i++) {
+                Node currentNode = newPath.getNodes().get(i);
+                Node nextNode = newPath.getNodes().get(i + 1);
+                if (!hasEdgeBetween(tempGraph, currentNode, nextNode)) {
+                    System.out.println("发现无效路径：节点 " + currentNode.getId() + 
+                                     " 和节点 " + nextNode.getId() + " 之间没有边连接");
+                    return null;  // 如果发现无效连接，返回null表示规划失败
+                }
+            }
+            
+            // 设置时间
+            LocalDateTime startTime = originalPath.getNodes().get(0).getArrivalTime();
+            newPath.getNodes().get(0).setArrivalTime(startTime);
+            newPath.getNodes().get(0).setDepartureTime(startTime.plusSeconds(1));
+            
+            for (int i = 1; i < newPath.getNodes().size(); i++) {
+                Node currentNode = newPath.getNodes().get(i-1);
+                Node nextNode = newPath.getNodes().get(i);
+                Edge edge = tempGraph.getEdge(currentNode, nextNode);
+                
+                // 使用实际的边长度
+                double distance = edge.getLength();
+                double speed = 0.5; // AGV.SpeedLevel.NORMAL
+                int travelSeconds = (int) Math.ceil(distance / speed);
+                
+                LocalDateTime arrivalTime = currentNode.getDepartureTime().plusSeconds(travelSeconds);
+                nextNode.setArrivalTime(arrivalTime);
+                nextNode.setDepartureTime(arrivalTime.plusSeconds(1));
+            }
+            return newPath;
+        }
+        return null;
+    }
+    
+    private static boolean hasEdgeBetween(Graph graph, Node node1, Node node2) {
+        return graph.getEdge(node1, node2) != null;
     }
     
     // 将临时表数据迁移到主表
@@ -195,26 +230,27 @@ public class ConflictManager {
                                      " -> " + conflict.existingDepartureTime);
                 }
                 
-                if (conflicts.size() > MAX_CONFLICT_NODES) {
-                    System.out.println("\n冲突点数量过多，尝试重新规划路径...");
+                // 尝试重新规划路径
+                if (conflicts.size() > MAX_CONFLICT_NODES || calculateRequiredDelay(conflicts) > MAX_DELAY_TIME) {
+                    System.out.println("\n尝试重新规划路径...");
                     conflicts.forEach(c -> unavailableNodes.add(c.node.getId()));
-                    currentPath = replanPath(originalPath, unavailableNodes, graph, pathfinder);
-                    if (currentPath != null) {
-                        System.out.println("重新规划后的路径: " + getPathNodesString(currentPath));
+                    Path newPath = replanPath(originalPath, unavailableNodes, graph, pathfinder);
+                    
+                    if (newPath != null) {
+                        System.out.println("重新规划成功，新路径: " + getPathNodesString(newPath));
+                        currentPath = newPath;
+                    } else {
+                        // 重新规划失败，使用延迟策略作为保底方案
+                        System.out.println("重新规划失败，使用延迟策略作为保底方案");
+                        long requiredDelay = calculateRequiredDelay(conflicts);
+                        System.out.println("采用延迟策略，延迟时间: " + requiredDelay + " 秒");
+                        currentPath = delayPath(originalPath, requiredDelay);
                     }
                 } else {
+                    // 直接使用延迟策略
                     long requiredDelay = calculateRequiredDelay(conflicts);
-                    if (requiredDelay > MAX_DELAY_TIME) {
-                        System.out.println("\n需要延迟时间过长，尝试重新规划路径...");
-                        conflicts.forEach(c -> unavailableNodes.add(c.node.getId()));
-                        currentPath = replanPath(originalPath, unavailableNodes, graph, pathfinder);
-                        if (currentPath != null) {
-                            System.out.println("重新规划后的路径: " + getPathNodesString(currentPath));
-                        }
-                    } else {
-                        System.out.println("\n采用延迟策略，延迟时间: " + requiredDelay + " 秒");
-                        currentPath = delayPath(currentPath, requiredDelay);
-                    }
+                    System.out.println("\n采用延迟策略，延迟时间: " + requiredDelay + " 秒");
+                    currentPath = delayPath(currentPath, requiredDelay);
                 }
                 
                 retryCount++;
