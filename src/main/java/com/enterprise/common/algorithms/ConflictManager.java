@@ -6,6 +6,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ConflictManager {
     private static final int TIME_THRESHOLD = 5; // 时间阈值（秒）
@@ -168,35 +169,46 @@ public class ConflictManager {
             Set<String> unavailableNodes = new HashSet<>();
             Path currentPath = originalPath;
             
+            System.out.println("\n开始处理 " + vehicleId + " 的路径冲突检测...");
+            System.out.println("原始路径节点序列: " + getPathNodesString(originalPath));
+            
             while (retryCount < MAX_RETRY_COUNT) {
                 saveToTempTable(currentPath, vehicleId, graph);
                 List<ConflictInfo> conflicts = detectConflicts(currentPath, vehicleId);
                 
                 if (conflicts.isEmpty()) {
+                    System.out.println(vehicleId + " 没有检测到冲突，路径可用");
                     migrateToMainTable(vehicleId);
                     clearTempTable();
                     return new PathResolution(currentPath, PathResolutionStatus.SUCCESS);
                 }
                 
-                System.out.println("检测到 " + conflicts.size() + " 个冲突点，尝解决...");
+                System.out.println("\n" + vehicleId + " 检测到 " + conflicts.size() + " 个冲突点:");
+                for (ConflictInfo conflict : conflicts) {
+                    System.out.println("冲突节点: " + conflict.node.getId() + 
+                                     ", 到达时间: " + conflict.node.getArrivalTime() +
+                                     " -> " + conflict.existingDepartureTime);
+                }
                 
                 if (conflicts.size() > MAX_CONFLICT_NODES) {
+                    System.out.println("\n冲突点数量过多，尝试重新规划路径...");
                     conflicts.forEach(c -> unavailableNodes.add(c.node.getId()));
                     currentPath = replanPath(originalPath, unavailableNodes, graph, pathfinder);
-                    if (currentPath == null) {
-                        return new PathResolution(null, PathResolutionStatus.FAILED_NO_ALTERNATIVE);
+                    if (currentPath != null) {
+                        System.out.println("重新规划后的路径: " + getPathNodesString(currentPath));
                     }
                 } else {
                     long requiredDelay = calculateRequiredDelay(conflicts);
                     if (requiredDelay > MAX_DELAY_TIME) {
+                        System.out.println("\n需要延迟时间过长，尝试重新规划路径...");
                         conflicts.forEach(c -> unavailableNodes.add(c.node.getId()));
                         currentPath = replanPath(originalPath, unavailableNodes, graph, pathfinder);
-                        if (currentPath == null) {
-                            return new PathResolution(null, PathResolutionStatus.FAILED_NO_ALTERNATIVE);
+                        if (currentPath != null) {
+                            System.out.println("重新规划后的路径: " + getPathNodesString(currentPath));
                         }
                     } else {
+                        System.out.println("\n采用延迟策略，延迟时间: " + requiredDelay + " 秒");
                         currentPath = delayPath(currentPath, requiredDelay);
-                        System.out.println("路径延迟 " + requiredDelay + " 秒");
                     }
                 }
                 
@@ -245,5 +257,12 @@ public class ConflictManager {
             }
         }
         return conflicts;
+    }
+    
+    private static String getPathNodesString(Path path) {
+        if (path == null) return "null";
+        return path.getNodes().stream()
+                  .map(Node::getId)
+                  .collect(Collectors.joining(" -> "));
     }
 }

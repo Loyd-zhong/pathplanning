@@ -1,7 +1,5 @@
-// src/pathfinding/main/PathVisualizer.java
+
 package com.enterprise.common.main;
-
-
 import com.enterprise.common.algorithms.AStarPathfinder;
 import com.enterprise.common.algorithms.TimeWindowManager;
 import com.enterprise.common.models.*;
@@ -23,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 // ... 其他现有的导入语句 ...
 public class PathVisualizer extends JPanel {
 
@@ -118,19 +117,27 @@ public class PathVisualizer extends JPanel {
 
     // 初始化 AGV 的任务和路径
     private void initializeTasks() {
-        Color[] colors = {Color.RED, Color.BLUE};
+        Color[] colors = {Color.RED, Color.BLUE, Color.GREEN};
         Node[][] tasks = {
-            {graph.getNodeById("0"), graph.getNodeById("4")},
-            {graph.getNodeById("1"), graph.getNodeById("5")}
+            {graph.getNodeById("0"), graph.getNodeById("3")},
+            {graph.getNodeById("1"), graph.getNodeById("3")},
+            {graph.getNodeById("8"), graph.getNodeById("4")}
         };
+        
+        LocalDateTime baseTime = LocalDateTime.now();
         
         for (int i = 0; i < tasks.length; i++) {
             List<Path> paths = calculateMultiplePaths(tasks[i][0], tasks[i][1]);
             if (!paths.isEmpty()) {
-                String agvId = "AGV-" + i;  // 为每个AGV创建唯一ID
+                String agvId = "AGV-" + i;
                 AGV agv = new AGV(paths, colors[i], graph, new TimeWindowManager(), 
                                 this.networkState, AGV.AGVType.TYPE_A, agvId);
                 agv.setSpeedLevel(AGV.SpeedLevel.NORMAL);
+                
+                // 为每个AGV设置递增的启动时间（比如每个AGV间隔5秒启动）
+                LocalDateTime startTime = baseTime.plusSeconds(i * 2);
+                paths.get(0).getNodes().get(0).setArrivalTime(startTime);
+                
                 agv.updateArrivalTimes(paths.get(0));
                 agv.preRecordPath();
                 agvs.add(agv);
@@ -291,3 +298,4 @@ public class PathVisualizer extends JPanel {
 
 
 }
+
