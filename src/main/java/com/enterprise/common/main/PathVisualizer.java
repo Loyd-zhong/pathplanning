@@ -120,7 +120,7 @@ public class PathVisualizer extends JPanel {
         Color[] colors = {Color.RED, Color.BLUE, Color.GREEN};
         Node[][] tasks = {
             {graph.getNodeById("0"), graph.getNodeById("3")},
-            {graph.getNodeById("1"), graph.getNodeById("3")},
+            {graph.getNodeById("0"), graph.getNodeById("3")},
             {graph.getNodeById("8"), graph.getNodeById("4")}
         };
         

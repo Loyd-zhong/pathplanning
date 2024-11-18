@@ -119,19 +119,24 @@ public class ConflictManager {
     // 重新规划路径
     private static Path replanPath(Path originalPath, Set<String> unavailableNodes, 
                                  Graph graph, AStarPathfinder pathfinder) {
-        Graph tempGraph = graph.clone(); // 创建图的副本
+        // 获取起点和终点
+        Node start = originalPath.getNodes().get(0);
+        Node end = originalPath.getNodes().get(originalPath.getNodes().size() - 1);
+        
+        // 从unavailableNodes中移除起点和终点
+        unavailableNodes.remove(start.getId());
+        unavailableNodes.remove(end.getId());
+        
+        Graph tempGraph = graph.clone();
         
         // 从临时图中移除不可用节点及其相关边
         for (String nodeId : unavailableNodes) {
             Node node = tempGraph.getNodeById(nodeId);
             if (node != null) {
-                tempGraph.removeNodeAndEdges(node); // 移除节点及其相关边
+                tempGraph.removeNodeAndEdges(node);
             }
         }
         
-        // 重新规划路径
-        Node start = originalPath.getNodes().get(0);
-        Node end = originalPath.getNodes().get(originalPath.getNodes().size() - 1);
         return pathfinder.findPath(tempGraph, start, end);
     }
     
