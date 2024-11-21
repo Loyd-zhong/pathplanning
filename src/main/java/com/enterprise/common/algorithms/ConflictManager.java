@@ -13,6 +13,8 @@ public class ConflictManager {
     private static final int MAX_RETRY_COUNT = 3; // 最大重试次数
     private static final int MAX_DELAY_TIME = 9; // 最大延迟时间（秒）
     private static final int MAX_CONFLICT_NODES = 3; // 最大冲突节点数
+    private static final int CLEANUP_INTERVAL = 5000; // 清理间隔（毫秒）
+    private static Timer cleanupTimer;
     
     // 清理过期记录
     private static void cleanExpiredRecords() throws SQLException,Exception {

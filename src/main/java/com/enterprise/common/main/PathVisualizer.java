@@ -21,6 +21,7 @@ import java.util.Set;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import com.enterprise.common.utils.DatabaseCleanupManager;
 // ... 其他现有的导入语句 ...
 public class PathVisualizer extends JPanel {
 
@@ -45,14 +46,16 @@ public class PathVisualizer extends JPanel {
             Connection conn = DatabaseConnection.getConnection();
             DatabaseInitializer.initializeDatabase(conn, graph);
             conn.close();
+            
+            // 启动数据库清理任务
+            DatabaseCleanupManager.getInstance().startPeriodicCleanup();
         } catch (Exception e) {
-            System.err.println("数据库表结构创建失败: " + e.getMessage());
+            System.err.println("初始化失败: " + e.getMessage());
             e.printStackTrace();
         }
 
-        setPreferredSize(new Dimension(800, 800)); // 设置首选大小
-
-        initializeTasks(); // 初始化 AGV 任务
+        setPreferredSize(new Dimension(800, 800));
+        initializeTasks();
 
         // 添加鼠标移动监听器，处理节点悬停功能
         addMouseMotionListener(new MouseMotionListener() {

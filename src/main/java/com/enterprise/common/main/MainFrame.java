@@ -10,9 +10,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import com.enterprise.common.algorithms.*;
+import com.enterprise.common.utils.DatabaseCleanupManager;
 
 public class MainFrame extends JFrame {
     private final NetworkState networkState;
+    private final PathVisualizer visualizer;
 
     public MainFrame() {
         this.networkState = new NetworkState();
@@ -26,8 +28,16 @@ public class MainFrame extends JFrame {
         Graph graph = MapLoader.loadMap(xmlFilePath);
 
         // 创建 PathVisualizer 和 TaskManagerPanel
-        PathVisualizer visualizer = new PathVisualizer(networkState);
+        visualizer = new PathVisualizer(networkState);
         List<AGV> agvs = visualizer.getAGVs();
+
+        // 添加窗口关闭时的清理操作
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                DatabaseCleanupManager.getInstance().stopPeriodicCleanup();
+            }
+        });
 
         // 使用 JTabbedPane 来管理不同的视图
         JTabbedPane tabbedPane = new JTabbedPane();
