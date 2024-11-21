@@ -38,7 +38,7 @@ public class PathVisualizer extends JPanel {
 
     public PathVisualizer(NetworkState networkState) {
         this.networkState = networkState;
-        String xmlFilePath = "D:\\AGV规划系统（4.25启动）\\第三方文件\\try.xml";
+        String xmlFilePath = "D:\\AGV规划系统（4.25启动）\\第三方文件\\try0.xml";
         this.graph = MapLoader.loadMap(xmlFilePath);
 
         try {
@@ -121,7 +121,7 @@ public class PathVisualizer extends JPanel {
     private void initializeTasks() {
         Color[] colors = {Color.RED, Color.BLUE, Color.GREEN};
         Node[][] tasks = {
-            {graph.getNodeById("0"), graph.getNodeById("3")},
+            {graph.getNodeById("21"), graph.getNodeById("0")},
             {graph.getNodeById("0"), graph.getNodeById("3")},
             {graph.getNodeById("8"), graph.getNodeById("4")}
         };
