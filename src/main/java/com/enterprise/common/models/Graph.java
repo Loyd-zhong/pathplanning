@@ -23,18 +23,22 @@ public class Graph implements Cloneable {
     }
 
     // 增加对弧线的添加
-    public void addCurvedEdge(Node from, Node to) {
-        // 计算弧线的长度并添加边
-        Edge edge = new Edge(from, to, true, 100); // 初始长度为 0，实际长度在 Edge 中计算
+    public void addCurvedEdge(Node from, Node to, boolean isDirectional) {
+        Edge edge = new Edge(from, to, isDirectional, true, 100);
         adjacencyList.get(from).add(edge);
-        adjacencyList.get(to).add(edge);
+        if (!isDirectional) {
+            adjacencyList.get(to).add(edge);
+        }
     }
 
     // 普通直线边添加
-    public void addEdge(Node node1, Node node2, double length, double weight) {
-        Edge edge = new Edge(node1, node2, false, length);
-        adjacencyList.get(node1).add(edge);
-        adjacencyList.get(node2).add(edge);
+    public void addEdge(Node from, Node to, boolean isDirectional, double length, double weight) {
+        Edge edge = new Edge(from, to, isDirectional, false, length);
+        edge.setWeight(weight); // 根据实际情况设置权重
+        adjacencyList.get(from).add(edge);
+        if (!isDirectional) {
+            adjacencyList.get(to).add(edge);
+        }
     }
 
     public Set<Edge> getEdges(Node node) {
@@ -93,9 +97,9 @@ public class Graph implements Cloneable {
             Node fromNode = cloned.getNodeById(edge.getFrom().getId());
             Node toNode = cloned.getNodeById(edge.getTo().getId());
             if (edge.isCurved()) {
-                cloned.addCurvedEdge(fromNode, toNode);
+                cloned.addCurvedEdge(fromNode, toNode, edge.isDirectional());
             } else {
-                cloned.addEdge(fromNode, toNode, edge.getLength(), 1.0); // 使用默认权重 1.0
+                cloned.addEdge(fromNode, toNode, edge.isDirectional(), edge.getLength(), 1.0); // 使用默认权重 1.0
             }
         }
         

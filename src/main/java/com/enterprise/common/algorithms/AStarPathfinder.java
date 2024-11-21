@@ -45,9 +45,12 @@ public class AStarPathfinder {
             // 逐一检查当前节点的所有连接的边，确保路径遵循图中的边
             for (Edge edge : graph.getEdges(current)) {
                 Node neighbor = edge.getOpposite(current);
+                if (neighbor == null || !edge.canTraverse(current, neighbor)) {
+                    continue;
+                }
                 if (closedSet.contains(neighbor)) continue;
 
-                double tentativeGScore = gScore.get(current) + edge.getLength();
+                double tentativeGScore = gScore.get(current) + edge.getWeight();
                 if (tentativeGScore < gScore.getOrDefault(neighbor, Double.POSITIVE_INFINITY)) {
                     cameFrom.put(neighbor, current);
                     gScore.put(neighbor, tentativeGScore);

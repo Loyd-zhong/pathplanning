@@ -185,10 +185,11 @@ public class PathVisualizer extends JPanel {
         g2.setColor(Color.GRAY);
         for (Node node : graph.getNodes()) {
             for (Edge edge : graph.getEdges(node)) {
-                int x1 = (int) ((edge.getFrom().getX() + translateX) * scale);
-                int y1 = (int) ((edge.getFrom().getY() + translateY) * scale);
-                int x2 = (int) ((edge.getTo().getX() + translateX) * scale);
-                int y2 = (int) ((edge.getTo().getY() + translateY) * scale);
+                int x1 = (int) edge.getFrom().getX();
+                int y1 = (int) edge.getFrom().getY();
+                int x2 = (int) edge.getTo().getX();
+                int y2 = (int) edge.getTo().getY();
+                
                 if (edge.isCurved()) {
                     drawCurvedLine(g2, edge.getFrom(), edge.getTo());
                 } else {

@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class MapLoader {
     public static Graph loadMap(String filePath) {
@@ -37,40 +38,41 @@ public class MapLoader {
             }
             
             // 第二遍：处理所有边的连接
+            Map<String, Set<String>> connections = new HashMap<>();
+            
+            // 首先收集所有的边连接信息
             for (int i = 0; i < pointList.getLength(); i++) {
                 Element element = (Element) pointList.item(i);
-                Node currentNode = nodeMap.get(element.getElementsByTagName("id").item(0).getTextContent());
+                String fromId = element.getElementsByTagName("id").item(0).getTextContent();
                 
                 NodeList neighborInfos = element.getElementsByTagName("NeighbInfo");
                 for (int j = 0; j < neighborInfos.getLength(); j++) {
-                    try {
-                        Element neighborInfo = (Element) neighborInfos.item(j);
-                        NodeList idElements = neighborInfo.getElementsByTagName("id");
-                        for (int k = 0; k < idElements.getLength(); k++) {
-                            Element idElement = (Element) idElements.item(k);
-                            String neighborId = idElement.getTextContent();
-                            
-                            // 检查是否存在isLine属性
-                            boolean isLine = idElement.hasAttribute("isLine") ? 
-                                    "0".equals(idElement.getAttribute("isLine")) : true;
-                                    
-                            Node neighborNode = nodeMap.get(neighborId);
-                            if (neighborNode != null) {
-                                double distance = Double.parseDouble(
-                                    neighborInfo.getElementsByTagName("distance").item(k).getTextContent()
-                                );
-                                
-                                // 检查是否有控制点
-                                NodeList ctrlPoints = neighborInfo.getElementsByTagName("CtrlPoint");
-                                boolean hasCurve = ctrlPoints.getLength() > 0;
-                                
-                                // 无论是否存在边都添加，确保双向连接
-                                graph.addEdge(currentNode, neighborNode, distance, 1.0);
-                                System.out.println("Adding edge: " + currentNode.getId() + " -> " + neighborId);
+                    Element neighborInfo = (Element) neighborInfos.item(j);
+                    NodeList idElements = neighborInfo.getElementsByTagName("id");
+                    
+                    for (int k = 0; k < idElements.getLength(); k++) {
+                        String toId = idElements.item(k).getTextContent();
+                        NodeList reverElements = neighborInfo.getElementsByTagName("Rever");
+                        boolean isDirectional = reverElements.getLength() > 0 && 
+                                             "0".equals(reverElements.item(0).getTextContent());
+                        
+                        double distance = Double.parseDouble(
+                            neighborInfo.getElementsByTagName("distance").item(k).getTextContent()
+                        );
+                        
+                        NodeList ctrlPoints = neighborInfo.getElementsByTagName("CtrlPoint");
+                        boolean hasCurve = ctrlPoints.getLength() > 0;
+                        
+                        Node fromNode = nodeMap.get(fromId);
+                        Node toNode = nodeMap.get(toId);
+                        
+                        if (fromNode != null && toNode != null) {
+                            if (hasCurve) {
+                                graph.addCurvedEdge(fromNode, toNode, isDirectional);
+                            } else {
+                                graph.addEdge(fromNode, toNode, isDirectional, distance, 1.0);
                             }
                         }
-                    } catch (Exception e) {
-                        System.err.println("Error processing edge: " + e.getMessage());
                     }
                 }
             }

@@ -6,18 +6,22 @@ import java.time.LocalDateTime;
 public class Edge {
     private Node from;  // 起始节点
     private Node to;    // 结束节点
+    private boolean isDirectional; // true表示单向,false表示双向
     private boolean isCurved; // 是否为弧线
     private double length; // 边的长度（直线或弧线）
     private String id;
     private LocalDateTime startTime;  // 新增：边的起始时间
     private LocalDateTime endTime;    // 新增：边的结束时间
+    private double weight;
 
     // 构造函数，增加长度和是否为弧线的标志
-    public Edge(Node from, Node to, boolean isCurved, double length) {
+    public Edge(Node from, Node to, boolean isDirectional, boolean isCurved, double length) {
         this.from = from;
         this.to = to;
+        this.isDirectional = isDirectional;
         this.isCurved = isCurved;
         this.length = length;
+        this.weight = length; // 默认权重等于长度
     }
 
     public Node getFrom() {
@@ -46,11 +50,10 @@ public class Edge {
     public Node getOpposite(Node node) {
         if (node.equals(from)) {
             return to;
-        } else if (node.equals(to)) {
+        } else if (node.equals(to) && !isDirectional) {
             return from;
-        } else {
-            throw new IllegalArgumentException("Node is not part of this edge");
         }
+        return null;
     }
     // 示例：计算弧线长度的逻辑（使用贝塞尔曲线作为示例）
     private double calculateCurveLength(Node start, Node end) {
@@ -94,5 +97,22 @@ public class Edge {
 
     public LocalDateTime getEndTime() {
         return endTime;
+    }
+
+    public boolean canTraverse(Node start, Node end) {
+        if (!isDirectional) return true;
+        return start.equals(from) && end.equals(to);
+    }
+
+    public boolean isDirectional() {
+        return isDirectional;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 }
