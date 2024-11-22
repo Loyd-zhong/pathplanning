@@ -54,7 +54,7 @@ public class MapLoader {
                         String toId = idElements.item(k).getTextContent();
                         NodeList reverElements = neighborInfo.getElementsByTagName("Rever");
                         boolean isDirectional = reverElements.getLength() > 0 && 
-                                             "0".equals(reverElements.item(0).getTextContent());
+                                             (reverElements.item(0).getTextContent().isEmpty() || "0".equals(reverElements.item(0).getTextContent()));
                         
                         double distance = Double.parseDouble(
                             neighborInfo.getElementsByTagName("distance").item(k).getTextContent()
