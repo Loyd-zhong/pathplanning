@@ -39,7 +39,7 @@ public class AGV {
     private VehiclePassageDAO vehiclePassageDAO = new VehiclePassageDAO();
     public static double Defaultspeed = 4.0;
     public double speed;
-    
+    private currentstate state = currentstate.emptyVehicle; // 添加属性
     public  double getDefaultspeed() {
         return Defaultspeed;
     }
@@ -64,7 +64,7 @@ public class AGV {
             return speed;
         }
     }
-    public enum currentstate{
+    public  static enum currentstate{
         emptyVehicle,
         backEmptyShelf,
         backToBackRack,
@@ -139,7 +139,7 @@ public class AGV {
             
             // 计算边的通过时间
             double distance = calculateDistance(currentNode, nextNode);
-            double timeNeeded = calculateTimeNeeded(distance, speedLevel.getSpeed());
+            double timeNeeded = calculateTimeNeeded(distance, getSpeedByStateAndNodes(state, currentNode, nextNode));
             
             // 设置下一个节点的到达时间
             nextArrivalTime = nextArrivalTime.plusSeconds((long)Math.ceil(timeNeeded));

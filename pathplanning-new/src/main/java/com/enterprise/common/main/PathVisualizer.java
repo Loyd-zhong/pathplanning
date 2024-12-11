@@ -136,6 +136,7 @@ public class PathVisualizer extends JPanel {
                                 this.networkState, AGV.AGVType.TYPE_A, agvId);
                 agv.setSpeedLevel(AGV.SpeedLevel.NORMAL);
                 agv.setDefaultspeed(4);
+                
                 // 为每个AGV设置递增的启动时间（比如每个AGV间隔5秒启动）
                 LocalDateTime startTime = baseTime.plusSeconds(i * 2);
                 paths.get(0).getNodes().get(0).setArrivalTime(startTime);
