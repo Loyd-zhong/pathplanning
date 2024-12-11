@@ -38,7 +38,7 @@ public class PathVisualizer extends JPanel {
 
     public PathVisualizer(NetworkState networkState) {
         this.networkState = networkState;
-        String xmlFilePath = "D:/AGV规划系统（4.25启动）/路径规划算法代码/pathplanning-good/pathplanning-new/src/main/java/com/enterprise/common/resources/新建文本文档 (3).xml";
+        String xmlFilePath = "D:/AGV规划系统（4.25启动）/路径规划算法代码/pathplanning-good/pathplanning-new/src/main/java/com/enterprise/common/resources/新建文本文档 (4).xml";
         this.graph = MapLoader.loadMap(xmlFilePath);
 
         try {
@@ -121,7 +121,7 @@ public class PathVisualizer extends JPanel {
     private void initializeTasks() {
         Color[] colors = {Color.RED, /*Color.BLUE, Color.GREEN*/};
         Node[][] tasks = {
-            {graph.getNodeById("1d6nlahfvzofr_1730779388474"), graph.getNodeById("1d6nlahfvzofr_1730785249812")},
+            {graph.getNodeById("474"), graph.getNodeById("696")},
             /*{graph.getNodeById("0"), graph.getNodeById("3")},
             {graph.getNodeById("8"), graph.getNodeById("4")}*/
         };

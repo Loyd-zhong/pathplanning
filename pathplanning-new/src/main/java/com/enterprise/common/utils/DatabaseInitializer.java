@@ -21,7 +21,7 @@ public class DatabaseInitializer {
     public static void createTables(Connection conn) throws SQLException {
         String createNodesTable = 
             "CREATE TABLE IF NOT EXISTS Nodes (" +
-            "    node_id VARCHAR(50) PRIMARY KEY," +
+            "    node_id VARCHAR(100) PRIMARY KEY," +
             "    x_coordinate DOUBLE NOT NULL," +
             "    y_coordinate DOUBLE NOT NULL," +
             "    capacity INT DEFAULT 3" +
@@ -29,7 +29,7 @@ public class DatabaseInitializer {
 
         String createEdgesTable = 
             "CREATE TABLE IF NOT EXISTS Edges (" +
-            "    edge_id VARCHAR(100) PRIMARY KEY," +
+            "    edge_id VARCHAR(255) PRIMARY KEY," +
             "    from_node_id VARCHAR(50) NOT NULL," +
             "    to_node_id VARCHAR(50) NOT NULL," +
             "    distance DOUBLE NOT NULL," +
@@ -46,9 +46,9 @@ public class DatabaseInitializer {
         String createVehiclePassagesTable = 
             "CREATE TABLE IF NOT EXISTS VehiclePassages (" +
             "    id BIGINT AUTO_INCREMENT PRIMARY KEY," +
-            "    vehicle_id VARCHAR(50) NOT NULL," +
-            "    node_id VARCHAR(50) NULL," +
-            "    edge_id VARCHAR(100) NULL," +
+            "    vehicle_id VARCHAR(255) NOT NULL," +
+            "    node_id VARCHAR(255) NULL," +
+            "    edge_id VARCHAR(255) NULL," +
             "    arrival_time DATETIME NOT NULL," +
             "    departure_time DATETIME NOT NULL," +
             "    planning_batch DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
@@ -62,8 +62,8 @@ public class DatabaseInitializer {
         String createPathsTable = 
             "CREATE TABLE IF NOT EXISTS paths (" +
             "    path_id BIGINT AUTO_INCREMENT PRIMARY KEY," +
-            "    start_node_id VARCHAR(50)," +
-            "    end_node_id VARCHAR(50)," +
+            "    start_node_id VARCHAR(255)," +
+            "    end_node_id VARCHAR(255)," +
             "    agv_type VARCHAR(20)," +
             "    created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP" +
             ")";
@@ -72,7 +72,7 @@ public class DatabaseInitializer {
             "CREATE TABLE IF NOT EXISTS path_nodes (" +
             "    id BIGINT AUTO_INCREMENT PRIMARY KEY," +
             "    path_id BIGINT," +
-            "    node_id VARCHAR(50)," +
+            "    node_id VARCHAR(255)," +
             "    node_x DOUBLE," +
             "    node_y DOUBLE," +
             "    estimated_arrival_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
@@ -128,8 +128,8 @@ public class DatabaseInitializer {
 
         // 准备插入语句
         String sql = "INSERT INTO Edges (edge_id, from_node_id, to_node_id, distance, " +
-                     "empty_vehicle_speed, back_empty_shelf_speed, back_to_back_rack_speed, backfill_shelf_speed) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        "empty_vehicle_speed, back_empty_shelf_speed, back_to_back_rack_speed, backfill_shelf_speed) " +
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
         // 用于跟踪已插入的边
         Set<String> insertedEdges = new HashSet<>();
@@ -142,7 +142,7 @@ public class DatabaseInitializer {
                 for (Edge edge : edges) {
                     // 定义正向和反向边的ID
                     String forwardEdgeId = edge.getFrom().getId() + "_" + edge.getTo().getId();
-                    
+
 
                     // 检查是否已经插入了正向或反向边
                     if (!insertedEdges.contains(forwardEdgeId)) {
