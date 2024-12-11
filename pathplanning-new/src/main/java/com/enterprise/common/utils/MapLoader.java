@@ -6,7 +6,7 @@ import com.enterprise.common.models.Edge;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
+import com.enterprise.common.models.AGV;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
@@ -75,36 +75,17 @@ public class MapLoader {
                                 edge = graph.addEdge(fromNode, toNode, isDirectional, distance, 1.0);
                             }
                             
-                            NodeList speedElements = neighborInfo.getElementsByTagName("emptyVehicleSpeed");
-                            if (speedElements.getLength() > 0) {
-                                String speedText = speedElements.item(0).getTextContent();
-                                if (!speedText.isEmpty()) {
-                                    edge.emptyVehicleSpeed = Double.parseDouble(speedText);
-                                }
-                            }
-
-                            speedElements = neighborInfo.getElementsByTagName("backEmptyShelfSpeed");
-                            if (speedElements.getLength() > 0) {
-                                String speedText = speedElements.item(0).getTextContent();
-                                if (!speedText.isEmpty()) {
-                                    edge.backEmptyShelfSpeed = Double.parseDouble(speedText);
-                                }
-                            }
-
-                            speedElements = neighborInfo.getElementsByTagName("backToBackRackSpeed");
-                            if (speedElements.getLength() > 0) {
-                                String speedText = speedElements.item(0).getTextContent();
-                                if (!speedText.isEmpty()) {
-                                    edge.backToBackRackSpeed = Double.parseDouble(speedText);
-                                }
-                            }
-                            speedElements = neighborInfo.getElementsByTagName("backfillShelfSpeed");
-                            if (speedElements.getLength() > 0) {
-                                String speedText = speedElements.item(0).getTextContent();
-                                if (!speedText.isEmpty()) {
-                                    edge.backfillShelfSpeed = Double.parseDouble(speedText);
-                                }
-                            }
+                            // 设置四种速度
+                            edge.emptyVehicleSpeed = getSpeedFromXML(neighborInfo, "emptyVehicleSpeed");
+                            edge.backEmptyShelfSpeed = getSpeedFromXML(neighborInfo, "backEmptyShelfSpeed");
+                            edge.backToBackRackSpeed = getSpeedFromXML(neighborInfo, "backToBackRackSpeed");
+                            edge.backfillShelfSpeed = getSpeedFromXML(neighborInfo, "backfillShelfSpeed");
+                            
+                            System.out.println("边 " + fromNode.getId() + " -> " + toNode.getId() + " 的速度值：" +
+                                              "\nemptyVehicleSpeed: " + edge.emptyVehicleSpeed +
+                                              "\nbackEmptyShelfSpeed: " + edge.backEmptyShelfSpeed +
+                                              "\nbackToBackRackSpeed: " + edge.backToBackRackSpeed +
+                                              "\nbackfillShelfSpeed: " + edge.backfillShelfSpeed);
                         }
                     }
                 }
@@ -116,5 +97,24 @@ public class MapLoader {
             e.printStackTrace();
             throw new RuntimeException("Failed to load map", e);
         }
+    }
+
+    // 处理速度值的辅助方法
+    private static double getSpeedFromXML(Element neighborInfo, String speedType) {
+        NodeList speedElements = neighborInfo.getElementsByTagName(speedType);
+        if (speedElements.getLength() > 0 && speedElements.item(0) != null) {
+            String speedText = speedElements.item(0).getTextContent();
+            if (speedText != null && !speedText.isEmpty()) {
+                try {
+                    double speed = Double.parseDouble(speedText);
+                    System.out.println("读取到" + speedType + ": " + speed);
+                    return speed;
+                } catch (NumberFormatException e) {
+                    System.out.println(speedType + "解析失败，使用默认速度");
+                }
+            }
+        }
+        System.out.println(speedType + "为空，使用默认速度: " + AGV.Defaultspeed);
+        return AGV.Defaultspeed;
     }
 }

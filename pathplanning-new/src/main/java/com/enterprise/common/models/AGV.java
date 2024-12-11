@@ -7,12 +7,17 @@ import com.enterprise.common.dao.PathDAO;
 import com.enterprise.common.dao.VehiclePassageDAO;
 import com.enterprise.common.algorithms.ConflictManager;
 import java.awt.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.swing.Timer;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 // 修改的AGV类代码
 
@@ -33,7 +38,7 @@ public class AGV {
     private Node currentNode;
     private VehiclePassageDAO vehiclePassageDAO = new VehiclePassageDAO();
     public static double Defaultspeed = 4.0;
-    
+    public double speed;
     
     public  double getDefaultspeed() {
         return Defaultspeed;
@@ -49,7 +54,6 @@ public class AGV {
         NORMAL(0.5),   // 每秒50米
         FAST(1),     // 每秒100米
         VERY_FAST(1.5); // 每秒150米
-
         private double speed; // 移动速度（米/秒）
 
         SpeedLevel(double speed) {
@@ -60,7 +64,63 @@ public class AGV {
             return speed;
         }
     }
-
+    public enum currentstate{
+        emptyVehicle,
+        backEmptyShelf,
+        backToBackRack,
+        backfillShelf;
+        
+    }
+    public double getSpeedByStateAndNodes(currentstate state, Node startNode, Node endNode) {
+        try {
+            // 构建edge_id
+            String edgeId = startNode.getId() + "_" + endNode.getId();
+            double speed = Defaultspeed; // 默认速度
+            
+            // SQL查询语句
+            String sql = "SELECT empty_vehicle_speed, back_empty_shelf_speed, back_to_back_rack_speed, backfill_shelf_speed " +
+                         "FROM Edges WHERE edge_id = ?";
+                         
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+                
+                stmt.setString(1, edgeId);
+                ResultSet rs = stmt.executeQuery();
+                
+                if (rs.next()) {
+                    // 根据状态选择对应的速度
+                    switch (state) {
+                        case emptyVehicle:
+                            speed = rs.getDouble("empty_vehicle_speed");
+                            break;
+                        case backEmptyShelf:
+                            speed = rs.getDouble("back_empty_shelf_speed");
+                            break;
+                        case backToBackRack:
+                            speed = rs.getDouble("back_to_back_rack_speed");
+                            break;
+                        case backfillShelf:
+                            speed = rs.getDouble("backfill_shelf_speed");
+                            break;
+                        default:
+                            speed = Defaultspeed;
+                    }
+                }
+                
+                
+            } catch (SQLException e) {
+                System.err.println("获取边速度失败: " + e.getMessage());
+                e.printStackTrace();
+                return Defaultspeed;
+            }
+            
+            return speed;
+        } catch (Exception e) {
+            System.err.println("获取边速度失败: " + e.getMessage());
+            e.printStackTrace();
+            return Defaultspeed;
+        }
+    }
     // AGV.java
     public void updateArrivalTimes(Path path) {
         LocalDateTime currentTime = LocalDateTime.now();

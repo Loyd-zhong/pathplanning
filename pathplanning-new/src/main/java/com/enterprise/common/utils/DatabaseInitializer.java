@@ -128,8 +128,8 @@ public class DatabaseInitializer {
 
         // 准备插入语句
         String sql = "INSERT INTO Edges (edge_id, from_node_id, to_node_id, distance, " +
-        "empty_vehicle_speed, back_empty_shelf_speed, back_to_back_rack_speed, backfill_shelf_speed) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                     "empty_vehicle_speed, back_empty_shelf_speed, back_to_back_rack_speed, backfill_shelf_speed) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
         // 用于跟踪已插入的边
         Set<String> insertedEdges = new HashSet<>();
@@ -142,11 +142,18 @@ public class DatabaseInitializer {
                 for (Edge edge : edges) {
                     // 定义正向和反向边的ID
                     String forwardEdgeId = edge.getFrom().getId() + "_" + edge.getTo().getId();
-                    String reverseEdgeId = edge.getTo().getId() + "_" + edge.getFrom().getId();
+                    
 
                     // 检查是否已经插入了正向或反向边
                     if (!insertedEdges.contains(forwardEdgeId)) {
-                        // 插入正向边
+                        // 添加调试信息
+                        System.out.println("准备插入边: " + forwardEdgeId);
+                        System.out.println("速度值: " +
+                            "\nemptyVehicleSpeed=" + edge.emptyVehicleSpeed +
+                            "\nbackEmptyShelfSpeed=" + edge.backEmptyShelfSpeed +
+                            "\nbackToBackRackSpeed=" + edge.backToBackRackSpeed +
+                            "\nbackfillShelfSpeed=" + edge.backfillShelfSpeed);
+
                         stmt.setString(1, forwardEdgeId);
                         stmt.setString(2, edge.getFrom().getId());
                         stmt.setString(3, edge.getTo().getId());
@@ -155,9 +162,12 @@ public class DatabaseInitializer {
                         stmt.setDouble(6, edge.backEmptyShelfSpeed);
                         stmt.setDouble(7, edge.backToBackRackSpeed);
                         stmt.setDouble(8, edge.backfillShelfSpeed);
+
                         try {
                             stmt.executeUpdate();
                             //System.out.println("成功插入边: " + forwardEdgeId);
+                            int rowsAffected = stmt.executeUpdate();
+                            System.out.println("插入成功，影响行数: " + rowsAffected);
                         } catch (SQLIntegrityConstraintViolationException e) {
                             //System.out.println("跳过重复边: " + forwardEdgeId);
                         }
@@ -165,9 +175,16 @@ public class DatabaseInitializer {
                         insertedEdges.add(forwardEdgeId);
                     }
 
-                    // 对于反向边，检查是否已经插入
+                    // 处理反向边
+                    String reverseEdgeId = edge.getTo().getId() + "_" + edge.getFrom().getId();
                     if (!insertedEdges.contains(reverseEdgeId)) {
-                        // 插入反向边
+                        System.out.println("准备插入反向边: " + reverseEdgeId);
+                        System.out.println("速度值: " +
+                            "\nemptyVehicleSpeed=" + edge.emptyVehicleSpeed +
+                            "\nbackEmptyShelfSpeed=" + edge.backEmptyShelfSpeed +
+                            "\nbackToBackRackSpeed=" + edge.backToBackRackSpeed +
+                            "\nbackfillShelfSpeed=" + edge.backfillShelfSpeed);
+
                         stmt.setString(1, reverseEdgeId);
                         stmt.setString(2, edge.getTo().getId());
                         stmt.setString(3, edge.getFrom().getId());
@@ -176,6 +193,7 @@ public class DatabaseInitializer {
                         stmt.setDouble(6, edge.backEmptyShelfSpeed);
                         stmt.setDouble(7, edge.backToBackRackSpeed);
                         stmt.setDouble(8, edge.backfillShelfSpeed);
+
                         try {
                             stmt.executeUpdate();
                             //System.out.println("成功插入边: " + reverseEdgeId);
@@ -185,7 +203,6 @@ public class DatabaseInitializer {
                         // 将反向边添加到集合中
                         insertedEdges.add(reverseEdgeId);
                     }
-                    
                 }
             }
         }
