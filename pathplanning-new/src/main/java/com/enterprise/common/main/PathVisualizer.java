@@ -121,9 +121,9 @@ public class PathVisualizer extends JPanel {
     private void initializeTasks() {
         Color[] colors = {Color.RED, /*Color.BLUE, Color.GREEN*/};
         Node[][] tasks = {
-            {graph.getNodeById("474"), graph.getNodeById("696")},
-            /*{graph.getNodeById("0"), graph.getNodeById("3")},
-            {graph.getNodeById("8"), graph.getNodeById("4")}*/
+            {graph.getNodeById("474"), graph.getNodeById("056")},
+            /* {graph.getNodeById("056"), graph.getNodeById("421")},
+            {graph.getNodeById("056"), graph.getNodeById("474")}*/
         };
         
         LocalDateTime baseTime = LocalDateTime.now();

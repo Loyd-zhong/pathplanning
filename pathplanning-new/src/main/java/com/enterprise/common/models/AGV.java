@@ -37,7 +37,7 @@ public class AGV {
     private int nextNodeIndex;
     private Node currentNode;
     private VehiclePassageDAO vehiclePassageDAO = new VehiclePassageDAO();
-    public static double Defaultspeed = 4.0;
+    public static double Defaultspeed = 10.0;
     public double speed;
     private currentstate state = currentstate.emptyVehicle; // 添加属性
     public  double getDefaultspeed() {
@@ -75,9 +75,12 @@ public class AGV {
         try {
             // 构建edge_id
             String edgeId = startNode.getId() + "_" + endNode.getId();
-            double speed = Defaultspeed; // 默认速度
+            double speed = Defaultspeed;
             
-            // SQL查询语句
+            System.out.println("------ 速度查询信息 ------");
+            System.out.println("边ID: " + edgeId);
+            System.out.println("AGV状态: " + state);
+            
             String sql = "SELECT empty_vehicle_speed, back_empty_shelf_speed, back_to_back_rack_speed, backfill_shelf_speed " +
                          "FROM Edges WHERE edge_id = ?";
                          
@@ -88,7 +91,13 @@ public class AGV {
                 ResultSet rs = stmt.executeQuery();
                 
                 if (rs.next()) {
-                    // 根据状态选择对应的速度
+                    // 打印数据库中该边的所有速度值
+                    System.out.println("数据库速度值:");
+                    System.out.println("empty_vehicle_speed: " + rs.getDouble("empty_vehicle_speed"));
+                    System.out.println("back_empty_shelf_speed: " + rs.getDouble("back_empty_shelf_speed"));
+                    System.out.println("back_to_back_rack_speed: " + rs.getDouble("back_to_back_rack_speed"));
+                    System.out.println("backfill_shelf_speed: " + rs.getDouble("backfill_shelf_speed"));
+                    
                     switch (state) {
                         case emptyVehicle:
                             speed = rs.getDouble("empty_vehicle_speed");
@@ -105,18 +114,22 @@ public class AGV {
                         default:
                             speed = Defaultspeed;
                     }
+                } else {
+                    System.out.println("警告: 未找到边 " + edgeId + " 的速度数据");
                 }
                 
+                System.out.println("最终使用速度: " + speed);
+                System.out.println("------------------------");
+                
+                return speed;
                 
             } catch (SQLException e) {
                 System.err.println("获取边速度失败: " + e.getMessage());
                 e.printStackTrace();
                 return Defaultspeed;
             }
-            
-            return speed;
         } catch (Exception e) {
-            System.err.println("获取边速度失败: " + e.getMessage());
+            System.err.println("获取速度失败: " + e.getMessage());
             e.printStackTrace();
             return Defaultspeed;
         }
@@ -140,6 +153,13 @@ public class AGV {
             // 计算边的通过时间
             double distance = calculateDistance(currentNode, nextNode);
             double timeNeeded = calculateTimeNeeded(distance, getSpeedByStateAndNodes(state, currentNode, nextNode));
+            System.out.println("====== 路径段计算信息 ======");
+            System.out.println("当前节点: " + currentNode.getId());
+            System.out.println("下一节点: " + nextNode.getId());
+            System.out.println("距离: " + distance);
+            System.out.println("速度: " + getSpeedByStateAndNodes(state, currentNode, nextNode));
+            System.out.println("预计用时: " + timeNeeded + "秒");
+            System.out.println("========================");
             
             // 设置下一个节点的到达时间
             nextArrivalTime = nextArrivalTime.plusSeconds((long)Math.ceil(timeNeeded));
@@ -280,6 +300,11 @@ public class AGV {
 
     // 计算两个节点之间的欧几里得距离
     private double calculateDistance(Node a, Node b) {
+        Edge edge = getEdgeBetweenNodes(a, b);
+        if (edge != null) {
+            return edge.getLength();  // 使用边的实际长度
+        }
+        // 如果找不到边，才使用欧几里得距离作为后备方案
         return Math.sqrt(Math.pow(a.getX() - b.getX(), 2) + Math.pow(a.getY() - b.getY(), 2));
     }
 
