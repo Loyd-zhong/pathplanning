@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class ConflictManager {
     private static final int TIME_THRESHOLD = 5; // 时间阈值（秒）
-    private static final int MAX_RETRY_COUNT = 3; // 最大重试次数
+    private static final int MAX_RETRY_COUNT = 50; // 最大重试次数
     private static final int MAX_DELAY_TIME = 9; // 最大延迟时间（秒）
     private static final int MAX_CONFLICT_NODES = 3; // 最大冲突节点数
     private static final int CLEANUP_INTERVAL = 5000; // 清理间隔（毫秒）
@@ -89,11 +89,11 @@ public class ConflictManager {
     
     // 检测时间冲突
     private static boolean isTimeConflict(LocalDateTime newArrival, LocalDateTime newDeparture,
-                                        LocalDateTime existingArrival, LocalDateTime existingDeparture) {
+                                        LocalDateTime existingArrival, LocalDateTime existingDeparture,int currentTimeThreshold) {
         long timeDiff1 = ChronoUnit.SECONDS.between(existingDeparture, newArrival);
         long timeDiff2 = ChronoUnit.SECONDS.between(newDeparture, existingArrival);
         
-        return Math.abs(timeDiff1) < TIME_THRESHOLD || Math.abs(timeDiff2) < TIME_THRESHOLD;
+        return Math.abs(timeDiff1) < currentTimeThreshold || Math.abs(timeDiff2) < currentTimeThreshold;
     }
     
     // 计算需要的延迟时
@@ -199,15 +199,35 @@ public class ConflictManager {
             stmt.execute("TRUNCATE TABLE temp_vehiclepassages");
         }
     }
-    
-    // 主要处理方法
-    public static PathResolution resolvePath(Path originalPath, String vehicleId, 
+    // 在resolvepath前的一个方法，用于对超过最大次数的状态进行处理
+    public static PathResolution handleMaxRetries(Path originalPath, String vehicleId, 
                                            Graph graph, AStarPathfinder pathfinder) throws Exception {
+        int   currentTimeThreshold = TIME_THRESHOLD;
+        while (currentTimeThreshold >=2) {
+            PathResolution pathResolution = resolvePath(originalPath, vehicleId, graph, pathfinder,currentTimeThreshold);
+            if (pathResolution.getStatus() == PathResolutionStatus.SUCCESS) {
+                return pathResolution;
+            }
+            currentTimeThreshold--;
+            System.out.println("\n达到最大重试次数，减少时间阈值为 " + currentTimeThreshold + " 秒");
+
+        }
+        return new PathResolution(null, PathResolutionStatus.FAILED_MAX_RETRIES,0);
+    }
+
+
+
+
+        // 主要处理方法
+        public static PathResolution resolvePath(Path originalPath, String vehicleId, 
+                                           Graph graph, AStarPathfinder pathfinder,int currentTimeThreshold) throws Exception {
+        
         try {
             cleanExpiredRecords();
             createTempTable();
             
             int retryCount = 0;
+            long totalDelay=0;
             Set<String> unavailableNodes = new HashSet<>();
             Path currentPath = originalPath;
             
@@ -216,13 +236,13 @@ public class ConflictManager {
             
             while (retryCount < MAX_RETRY_COUNT) {
                 saveToTempTable(currentPath, vehicleId, graph);
-                List<ConflictInfo> conflicts = detectConflicts(currentPath, vehicleId);
+                List<ConflictInfo> conflicts = detectConflicts(currentPath, vehicleId,currentTimeThreshold);
                 
                 if (conflicts.isEmpty()) {
                     System.out.println(vehicleId + " 没有检测到冲突，路径可用");
                     migrateToMainTable(vehicleId);
                     clearTempTable();
-                    return new PathResolution(currentPath, PathResolutionStatus.SUCCESS);
+                    return new PathResolution(currentPath, PathResolutionStatus.SUCCESS,totalDelay);
                 }
                 
                 System.out.println("\n" + vehicleId + " 检测到 " + conflicts.size() + " 个冲突点:");
@@ -245,13 +265,15 @@ public class ConflictManager {
                         // 重新规划失败，使用延迟策略作为保底方案
                         System.out.println("重新规划失败，使用延迟策略作为保底方案");
                         long requiredDelay = calculateRequiredDelay(conflicts);
-                        System.out.println("采用延迟策略，延迟时间: " + requiredDelay + " 秒");
+                        totalDelay+=requiredDelay;
+                        System.out.println("采用延迟策略，延迟时间: " + totalDelay + " 秒");
                         currentPath = delayPath(originalPath, requiredDelay);
                     }
                 } else {
                     // 直接使用延迟策略
                     long requiredDelay = calculateRequiredDelay(conflicts);
-                    System.out.println("\n采用延迟策略，延迟时间: " + requiredDelay + " 秒");
+                    totalDelay+=requiredDelay;
+                    System.out.println("\n采用延迟策略，延迟时间: " + totalDelay + " 秒");
                     currentPath = delayPath(currentPath, requiredDelay);
                 }
                 
@@ -259,16 +281,16 @@ public class ConflictManager {
                 clearTempTable();
             }
             
-            return new PathResolution(null, PathResolutionStatus.FAILED_MAX_RETRIES);
+            return new PathResolution(null, PathResolutionStatus.FAILED_MAX_RETRIES,totalDelay);
             
         } catch (SQLException e) {
             System.err.println("数据库操作失败: " + e.getMessage());
             e.printStackTrace();
-            return new PathResolution(null, PathResolutionStatus.FAILED_DATABASE_ERROR, e.getMessage());
+            return new PathResolution(null, PathResolutionStatus.FAILED_DATABASE_ERROR, e.getMessage(),0);
         }
     }
     
-    private static List<ConflictInfo> detectConflicts(Path path, String vehicleId) throws Exception {
+    private static List<ConflictInfo> detectConflicts(Path path, String vehicleId,int currentTimeThreshold) throws Exception {
         List<ConflictInfo> conflicts = new ArrayList<>();
         String sql = "SELECT v.node_id, v.arrival_time, v.departure_time " +
                     "FROM vehiclepassages v " +

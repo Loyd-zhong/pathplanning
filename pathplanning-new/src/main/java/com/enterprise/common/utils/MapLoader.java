@@ -81,11 +81,11 @@ public class MapLoader {
                             edge.backToBackRackSpeed = getSpeedFromXML(neighborInfo, "backToBackRackSpeed");
                             edge.backfillShelfSpeed = getSpeedFromXML(neighborInfo, "backfillShelfSpeed");
                             
-                            System.out.println("边 " + fromNode.getId() + " -> " + toNode.getId() + " 的速度值：" +
-                                              "\nemptyVehicleSpeed: " + edge.emptyVehicleSpeed +
-                                              "\nbackEmptyShelfSpeed: " + edge.backEmptyShelfSpeed +
-                                              "\nbackToBackRackSpeed: " + edge.backToBackRackSpeed +
-                                              "\nbackfillShelfSpeed: " + edge.backfillShelfSpeed);
+                            //System.out.println("边 " + fromNode.getId() + " -> " + toNode.getId() + " 的速度值：" +
+                                              //"\nemptyVehicleSpeed: " + edge.emptyVehicleSpeed +
+                                              //"\nbackEmptyShelfSpeed: " + edge.backEmptyShelfSpeed +
+                                              //"\nbackToBackRackSpeed: " + edge.backToBackRackSpeed +
+                                              //"\nbackfillShelfSpeed: " + edge.backfillShelfSpeed);
                         }
                     }
                 }
@@ -107,14 +107,14 @@ public class MapLoader {
             if (speedText != null && !speedText.isEmpty()) {
                 try {
                     double speed = Double.parseDouble(speedText);
-                    System.out.println("读取到" + speedType + ": " + speed);
+                    //System.out.println("读取到" + speedType + ": " + speed);
                     return speed;
                 } catch (NumberFormatException e) {
-                    System.out.println(speedType + "解析失败，使用默认速度");
+                    //System.out.println(speedType + "解析失败，使用默认速度");
                 }
             }
         }
-        System.out.println(speedType + "为空，使用默认速度: " + AGV.Defaultspeed);
+        //System.out.println(speedType + "为空，使用默认速度: " + AGV.Defaultspeed);
         return AGV.Defaultspeed;
     }
 }

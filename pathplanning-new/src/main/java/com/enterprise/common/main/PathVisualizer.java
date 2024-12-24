@@ -119,11 +119,11 @@ public class PathVisualizer extends JPanel {
 
     // 初始化 AGV 的任务和路径
     private void initializeTasks() {
-        Color[] colors = {Color.RED, /*Color.BLUE, Color.GREEN*/};
+        Color[] colors = {Color.RED, Color.BLUE, Color.GREEN};
         Node[][] tasks = {
+            {graph.getNodeById("696"), graph.getNodeById("474")},
             {graph.getNodeById("474"), graph.getNodeById("056")},
-            /* {graph.getNodeById("056"), graph.getNodeById("421")},
-            {graph.getNodeById("056"), graph.getNodeById("474")}*/
+            {graph.getNodeById("474"), graph.getNodeById("056")}
         };
         
         LocalDateTime baseTime = LocalDateTime.now();

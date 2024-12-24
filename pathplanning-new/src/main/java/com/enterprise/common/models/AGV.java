@@ -149,10 +149,15 @@ public class AGV {
         for (int i = 0; i < nodes.size() - 1; i++) {
             Node currentNode = nodes.get(i);
             Node nextNode = nodes.get(i + 1);
-            
+            Node lastNode = i > 0 ? nodes.get(i - 1) : null;  // 添加判断
+
             // 计算边的通过时间
             double distance = calculateDistance(currentNode, nextNode);
             double timeNeeded = calculateTimeNeeded(distance, getSpeedByStateAndNodes(state, currentNode, nextNode));
+            if (lastNode != null &&isTurn(lastNode,currentNode,nextNode)) {
+                timeNeeded=timeNeeded+turnTime;
+                System.out.println("节点"+currentNode.getId()+"需要转弯，添加转弯时间"+agvType.turnTime+"秒");
+            }
             System.out.println("====== 路径段计算信息 ======");
             System.out.println("当前节点: " + currentNode.getId());
             System.out.println("下一节点: " + nextNode.getId());
@@ -351,7 +356,7 @@ public class AGV {
         }
     }
 
-    private static double turnTime = 0.5; // 默认转弯时间
+    private static double turnTime = 3; // 默认转弯时间
 
     public static void setTurnTime(double time) {
         turnTime = time;
@@ -393,7 +398,7 @@ public class AGV {
         }
         
         try {
-            PathResolution resolution = ConflictManager.resolvePath(
+            PathResolution resolution = ConflictManager.handleMaxRetries(
                 currentPath,
                 this.agvId,
                 graph,
