@@ -1,5 +1,6 @@
 package com.enterprise.common.algorithms;
 
+import com.enterprise.common.models.Path;
 import com.enterprise.common.models.*;
 import com.enterprise.common.utils.DatabaseConnection;
 import java.sql.*;
@@ -222,7 +223,7 @@ public class ConflictManager {
         public static PathResolution resolvePath(Path originalPath, String vehicleId, 
                                            Graph graph, AStarPathfinder pathfinder,int currentTimeThreshold) throws Exception {
         
-        try {
+        try {      
             cleanExpiredRecords();
             createTempTable();
             

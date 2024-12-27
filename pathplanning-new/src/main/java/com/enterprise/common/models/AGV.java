@@ -6,6 +6,8 @@ import com.enterprise.common.algorithms.TimeWindowManager;
 import com.enterprise.common.dao.PathDAO;
 import com.enterprise.common.dao.VehiclePassageDAO;
 import com.enterprise.common.algorithms.ConflictManager;
+import com.enterprise.common.models.PathResolution;
+import com.enterprise.common.models.PathResolutionStatus;
 import java.awt.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

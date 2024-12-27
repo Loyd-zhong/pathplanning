@@ -40,7 +40,8 @@ public class PathVisualizer extends JPanel {
         this.networkState = networkState;
         String xmlFilePath = "D:/AGV规划系统（4.25启动）/路径规划算法代码/pathplanning-good/pathplanning-new/src/main/java/com/enterprise/common/resources/新建文本文档 (4).xml";
         this.graph = MapLoader.loadMap(xmlFilePath);
-
+        // 设置共享的 Graph 实例
+        getLateAgv.setGraph(this.graph);   
         try {
             // 只创建表结构，不初始化数据
             Connection conn = DatabaseConnection.getConnection();
