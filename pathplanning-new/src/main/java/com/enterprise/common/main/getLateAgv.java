@@ -29,6 +29,8 @@ public class getLateAgv {
     }
     
     public LateAgvResult getLateAgv(String node, List<AgvNodeVo> agvs) {
+        long startTime = System.currentTimeMillis();  // 开始计时
+        
         // 方法内部直接使用静态 graph 变量
         Node originNode = graph.getNodeById(node);
         if (originNode == null) {
@@ -86,9 +88,13 @@ public class getLateAgv {
         }
         
         if (bestAgv != null) {
+            long endTime = System.currentTimeMillis();  // 结束计时
+            System.out.println("计算耗时: " + (endTime - startTime) + "毫秒");  // 输出耗时
             return new LateAgvResult(bestAgv, shortestTime);
         }
         
+        long endTime = System.currentTimeMillis();  // 结束计时
+        System.out.println("计算耗时: " + (endTime - startTime) + "毫秒");  // 输出耗时
         return null;
     }
     
@@ -145,42 +151,73 @@ public class getLateAgv {
     
     private long calculatePathTime(Node start, Node end) {
         AStarPathfinder pathfinder = new AStarPathfinder();
-        Path path = pathfinder.findPath(graph, start, end);
+        Path originalPath = pathfinder.findPath(graph, start, end);
         
-        if (path == null) {
+        if (originalPath == null) {
             return Long.MAX_VALUE;
         }
         
-        // 设置路径起点时间
-        LocalDateTime currentTime = LocalDateTime.now();
-        Node startNode = path.getNodes().get(0);
-        startNode.setArrivalTime(currentTime);
-        startNode.setDepartureTime(currentTime.plusSeconds(1));  // 在起点停留1秒
-        
-        LocalDateTime nextArrivalTime = startNode.getDepartureTime();
-        
-        for (int i = 0; i < path.getNodes().size() - 1; i++) {
-            Node currentNode = path.getNodes().get(i);
-            Node nextNode = path.getNodes().get(i + 1);
-            Node lastNode = i > 0 ? path.getNodes().get(i - 1) : null;
-
-            // 计算边的通过时间
-            double distance = calculateDistance(currentNode, nextNode);
-            double speed = getSpeedByStateAndNodes(AGV.currentstate.emptyVehicle, currentNode, nextNode);
-            double timeNeeded = distance / speed;
+        try {
+            String tempAgvId = "TEMP_" + System.currentTimeMillis();
+            PathResolution resolution = ConflictManager.resolvePath(
+                originalPath,
+                tempAgvId,
+                graph,
+                pathfinder,
+                5
+            );
             
-            if (lastNode != null && isTurn(lastNode, currentNode, nextNode)) {
-                timeNeeded += 3; // 默认转弯时间3秒
+            // 删除临时记录
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(
+                     "DELETE FROM vehiclepassages WHERE vehicle_id = ?")) {
+                stmt.setString(1, tempAgvId);
+                stmt.executeUpdate();
             }
             
-            nextArrivalTime = nextArrivalTime.plusSeconds((long)Math.ceil(timeNeeded));
-            nextNode.setArrivalTime(nextArrivalTime);
-            nextNode.setDepartureTime(nextArrivalTime.plusSeconds(1));  // 每个节点停留1秒
+            if (resolution.getStatus() == PathResolutionStatus.SUCCESS) {
+                Path resolvedPath = resolution.getPath();
+                long totalTime = 0;
+                List<Node> nodes = resolvedPath.getNodes();
+                
+                // 计算每段路径的时间
+                for (int i = 0; i < nodes.size() - 1; i++) {
+                    Node currentNode = nodes.get(i);
+                    Node nextNode = nodes.get(i + 1);
+                    Edge edge = graph.getEdge(currentNode, nextNode);
+                    
+                    // 计算行驶时间
+                    double distance = edge.getLength();
+                    double speed = 0.5; // 使用默认速度
+                    int travelSeconds = (int) Math.ceil(distance / speed);
+                    
+                    // 加上行驶时间
+                    totalTime += travelSeconds;
+                    
+                    // 每个节点的停留时间（1秒）
+                    totalTime += 1;
+                    
+                    // 如果需要转弯，加上转弯时间
+                    if (i > 0 && isTurn(nodes.get(i-1), currentNode, nextNode)) {
+                        totalTime += 3; // 假设转弯时间为3秒，可以根据实际情况调整
+                    }
+                }
+                
+                // 加上最后一个节点的停留时间
+                totalTime += 1;
+                
+                // 加上冲突解决带来的延迟
+                totalTime += resolution.delaySeconds;
+                
+                return totalTime;
+            }
             
-            nextArrivalTime = nextNode.getDepartureTime();
+            return Long.MAX_VALUE;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Long.MAX_VALUE;
         }
-        
-        return Duration.between(currentTime, nextArrivalTime).getSeconds();
     }
     
     private double getSpeedByStateAndNodes(AGV.currentstate state, Node startNode, Node endNode) {

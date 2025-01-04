@@ -16,18 +16,31 @@ public class GetLateAgvTest {
         // 2. 创建测试用的 AGV 列表
         List<AgvNodeVo> testAgvs = new ArrayList<>();
         
-        // 添加几个测试用的 AGV
-        AgvNodeVo agv1 = new AgvNodeVo(1L, "696", null);  // id, curNodeId, lastNodeId
-        AgvNodeVo agv2 = new AgvNodeVo(2L, null, "474");
-        AgvNodeVo agv3 = new AgvNodeVo(3L, "056", null);
-        
-        testAgvs.add(agv1);
-        testAgvs.add(agv2);
-        testAgvs.add(agv3);
+        // 添加20个测试用的 AGV，分布在不同的节点
+        testAgvs.add(new AgvNodeVo(1L, "696", null));
+        //testAgvs.add(new AgvNodeVo(2L, "474", null));
+        testAgvs.add(new AgvNodeVo(3L, "056", null));
+        //testAgvs.add(new AgvNodeVo(4L, "826", null));
+        //testAgvs.add(new AgvNodeVo(5L, "532", null));
+        testAgvs.add(new AgvNodeVo(6L, "708", null));
+        testAgvs.add(new AgvNodeVo(7L, "590", null));
+        testAgvs.add(new AgvNodeVo(8L, "236", null));
+        testAgvs.add(new AgvNodeVo(9L, "354", null));
+        testAgvs.add(new AgvNodeVo(10L, "118", null));
+        testAgvs.add(new AgvNodeVo(11L, "944", null));
+        testAgvs.add(new AgvNodeVo(12L, "472", null));
+        testAgvs.add(new AgvNodeVo(13L, "590", null));
+        testAgvs.add(new AgvNodeVo(14L, "708", null));
+        //testAgvs.add(new AgvNodeVo(15L, "826", null));
+        testAgvs.add(new AgvNodeVo(16L, "944", null));
+        testAgvs.add(new AgvNodeVo(17L, "118", null));
+        testAgvs.add(new AgvNodeVo(18L, "236", null));
+        testAgvs.add(new AgvNodeVo(19L, "354", null));
+        testAgvs.add(new AgvNodeVo(20L, "472", null));
         
         // 3. 测试获取最近 AGV
         getLateAgv finder = new getLateAgv();
-        String targetNode = "696";  // 目标节点
+        String targetNode = "532";  // 目标节点
         
         System.out.println("开始测试获取最近AGV...");
         System.out.println("目标节点: " + targetNode);
@@ -39,6 +52,17 @@ public class GetLateAgvTest {
             System.out.println("\n测试结果:");
             System.out.println("最近的AGV ID: " + result.getAgvId());
             System.out.println("预计到达时间: " + result.getDelayTime() + "秒");
+            
+            // 打印选中的AGV的起始位置
+            AgvNodeVo selectedAgv = testAgvs.stream()
+                .filter(agv -> agv.getId().equals(result.getAgvId()))
+                .findFirst()
+                .orElse(null);
+                
+            if (selectedAgv != null) {
+                System.out.println("选中AGV的起始节点: " + 
+                    (selectedAgv.getCurNodeId() != null ? selectedAgv.getCurNodeId() : selectedAgv.getLastNodeId()));
+            }
         } else {
             System.out.println("\n未找到合适的AGV");
         }
