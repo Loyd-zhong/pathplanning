@@ -24,7 +24,7 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         // 加载地图
-        String xmlFilePath = "D:/AGV规划系统（4.25启动）/第三方文件/冲突测试地图_1y4h106npm23n.xml"; // 请确保路径正确
+        String xmlFilePath = "pathplanning-new\\src\\main\\java\\com\\enterprise\\common\\resources\\海康冲突算法.xml";
         Graph graph = MapLoader.loadMap(xmlFilePath);
 
         // 创建 PathVisualizer 和 TaskManagerPanel

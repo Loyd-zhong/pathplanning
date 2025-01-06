@@ -38,7 +38,7 @@ public class PathVisualizer extends JPanel {
 
     public PathVisualizer(NetworkState networkState) {
         this.networkState = networkState;
-            String xmlFilePath = "D:/AGV规划系统（4.25启动）/第三方文件/冲突测试地图_1y4h106npm23n.xml";
+            String xmlFilePath = "pathplanning-new\\src\\main\\java\\com\\enterprise\\common\\resources\\海康冲突算法.xml";
             this.graph = MapLoader.loadMap(xmlFilePath);
         // 设置共享的 Graph 实例
         getLateAgv.setGraph(this.graph);   
@@ -122,9 +122,9 @@ public class PathVisualizer extends JPanel {
     private void initializeTasks() {
         Color[] colors = {Color.RED, Color.BLUE, Color.GREEN};
         Node[][] tasks = {
-            {graph.getNodeById("474"), graph.getNodeById("826")},
-            {graph.getNodeById("474"), graph.getNodeById("056")},
-            {graph.getNodeById("474"), graph.getNodeById("056")}
+            {graph.getNodeById("6"), graph.getNodeById("0")},
+            {graph.getNodeById("7"), graph.getNodeById("1")},
+            {graph.getNodeById("2"), graph.getNodeById("8")}
         };
         
         LocalDateTime baseTime = LocalDateTime.now();

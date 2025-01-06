@@ -39,7 +39,7 @@ public class AGV {
     private int nextNodeIndex;
     private Node currentNode;
     private VehiclePassageDAO vehiclePassageDAO = new VehiclePassageDAO();
-    public static double Defaultspeed = 10.0;
+    public static double Defaultspeed = 4.0;
     public double speed;
     private currentstate state = currentstate.emptyVehicle; // 添加属性
     public  double getDefaultspeed() {

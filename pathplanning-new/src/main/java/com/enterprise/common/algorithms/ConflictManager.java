@@ -1,6 +1,5 @@
 package com.enterprise.common.algorithms;
 
-import com.enterprise.common.models.Path;
 import com.enterprise.common.models.*;
 import com.enterprise.common.utils.DatabaseConnection;
 import java.sql.*;
@@ -78,7 +77,7 @@ public class ConflictManager {
                         String edgeId = currentNode.getId() + "_" + nextNode.getId();
                         stmt.setString(1, vehicleId);
                         stmt.setString(2, null);  // 边记录的node_id为null
-                        stmt.setString(3, edgeId);
+                        stmt.setString(3, edge.getId());
                         stmt.setTimestamp(4, Timestamp.valueOf(currentNode.getDepartureTime()));
                         stmt.setTimestamp(5, Timestamp.valueOf(nextNode.getArrivalTime()));
                         stmt.executeUpdate();
@@ -293,32 +292,75 @@ public class ConflictManager {
     
     private static List<ConflictInfo> detectConflicts(Path path, String vehicleId,int currentTimeThreshold) throws Exception {
         List<ConflictInfo> conflicts = new ArrayList<>();
-        String sql = "SELECT v.node_id, v.arrival_time, v.departure_time " +
+        String nodeSql = "SELECT v.node_id, v.arrival_time, v.departure_time " +
                     "FROM vehiclepassages v " +
                     "JOIN temp_vehiclepassages t ON v.node_id = t.node_id " +
                     "WHERE v.vehicle_id != ? " +
                     "AND t.vehicle_id = ? " +
                     "AND ((v.arrival_time <= t.departure_time AND v.departure_time >= t.arrival_time) " +
                     "OR (t.arrival_time <= v.departure_time AND t.departure_time >= v.arrival_time))";
+        String edgeSql = "SELECT v.edge_id, v.arrival_time, v.departure_time " +
+                "FROM vehiclepassages v " +
+                "JOIN temp_vehiclepassages t " +
+                "WHERE v.vehicle_id != ? " +
+                "AND t.vehicle_id = ? " +
+                "AND v.edge_id IS NOT NULL " +
+                "AND (" +
+                    // 直接匹配相同的边
+                    "v.edge_id = t.edge_id OR " +
+                    // 匹配对向边（通过字符串处理）
+                    "v.edge_id = CONCAT(SUBSTRING_INDEX(t.edge_id, '_', -1), '_', SUBSTRING_INDEX(t.edge_id, '_', 1))" +
+                ") " +
+                "AND ((v.arrival_time <= t.departure_time AND v.departure_time >= t.arrival_time) " +
+                "OR (t.arrival_time <= v.departure_time AND t.departure_time >= v.arrival_time))";
                 
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, vehicleId);
-            stmt.setString(2, vehicleId);
-            ResultSet rs = stmt.executeQuery();
-            
+            PreparedStatement stmt = conn.prepareStatement(nodeSql)) {
+                stmt.setString(1, vehicleId);
+                stmt.setString(2, vehicleId);
+                ResultSet rs = stmt.executeQuery();
+                
+                while (rs.next()) {
+                    String nodeId = rs.getString("node_id");
+                    LocalDateTime existingArrival = rs.getTimestamp("arrival_time").toLocalDateTime();
+                    LocalDateTime existingDeparture = rs.getTimestamp("departure_time").toLocalDateTime();
+                    
+                    Node conflictNode = path.getNodes().stream()
+                        .filter(n -> n.getId().equals(nodeId))
+                        .findFirst()
+                        .orElse(null);
+                    
+                    if (conflictNode != null) {
+                        conflicts.add(new ConflictInfo(conflictNode, existingDeparture));
+                    }
+                }
+            }
+            try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(edgeSql)) {
+                stmt.setString(1, vehicleId);
+                stmt.setString(2, vehicleId);
+                ResultSet rs = stmt.executeQuery();
+                
             while (rs.next()) {
-                String nodeId = rs.getString("node_id");
+                String edgeId = rs.getString("edge_id");
                 LocalDateTime existingArrival = rs.getTimestamp("arrival_time").toLocalDateTime();
                 LocalDateTime existingDeparture = rs.getTimestamp("departure_time").toLocalDateTime();
                 
-                Node conflictNode = path.getNodes().stream()
-                    .filter(n -> n.getId().equals(nodeId))
-                    .findFirst()
-                    .orElse(null);
-                
-                if (conflictNode != null) {
-                    conflicts.add(new ConflictInfo(conflictNode, existingDeparture));
+                // 从边ID中提取起始和终止节点（假设边ID格式为 "startNode_endNode"）
+                String[] nodeIds = edgeId.split("_");
+                if (nodeIds.length == 2) {
+                    // 找到对应的路径节点
+                    for (int i = 0; i < path.getNodes().size() - 1; i++) {
+                        Node currentNode = path.getNodes().get(i);
+                        Node nextNode = path.getNodes().get(i + 1);
+                        String currentEdgeId = currentNode.getId() + "_" + nextNode.getId();
+                        
+                        if (currentEdgeId.equals(edgeId)) {
+                            // 将边冲突转换为节点冲突（使用边的起始节点）
+                            conflicts.add(new ConflictInfo(currentNode, existingDeparture));
+                            break;
+                        }
+                    }
                 }
             }
         }

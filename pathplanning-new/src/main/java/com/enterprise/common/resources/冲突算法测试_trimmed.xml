@@ -1,0 +1,955 @@
+<?xml version='1.0' encoding='utf-8'?>
+<MapCfg>
+    <Col>1320</Col>
+    <Height>663</Height>
+    <MapID>1u4pph21ftepsp</MapID>
+    <MapName>冲突检测算法测试</MapName>
+    <PointInfo>
+        <id>551</id>
+        <name>1u4pph21ftepsp_1736044713551</name>
+        <pointName>高速区_1u4pph21ftepsp_1736044713551</pointName>
+        <xpos>3.243</xpos>
+        <ypos>-2.377</ypos>
+        <width>000</width>
+        <height>1.000</height>
+        <value text="14" isChargeable="1">14</value>
+        <RoadProperty>1</RoadProperty>
+        <Rot>2</Rot>
+        <alldirRot>0</alldirRot>
+        <allDir>3</allDir>
+        <EleDir>7</EleDir>
+        <ElePre>0</ElePre>
+        <RotRad>0</RotRad>
+        <robottype />
+        <RotUnderPod>1</RotUnderPod>
+        <rotMech>1</rotMech>
+        <ForbidRotWithoutPod />
+        <IsRangePoint />
+        <IsOutPoint />
+        <disabledCarouselRotation>true</disabledCarouselRotation>
+        <evit>1</evit>
+        <rotByRobotType />
+        <exChgRbtType />
+        <rotForPodType />
+        <sensorswitchPoint>1,2,3,4,5,6,7,8</sensorswitchPoint>
+        <ObsShieldLen />
+        <DyInPodOffset />
+        <PalletRecognition>1</PalletRecognition>
+        <RotBarrierArea />
+        <DyInOutCtrl />
+        <IsUpdateMap>2</IsUpdateMap>
+        <WorkDockDist />
+        <TranZoneType priority="3">1</TranZoneType>
+        <ForkWaitPos />
+        <pointOrientations>7</pointOrientations>
+        <dynamicInOutShelving>1</dynamicInOutShelving>
+        <cameraDockingDistance />
+        <obstacleShieldingDistance />
+        <callSite />
+        <affiliatedLocations />
+        <affiliatedDepots />
+        <associatedShelfTypes />
+        <relatedModels />
+        <referenceHeight />
+        <shelfDirection />
+        <ipAddress />
+        <NeighbInfo>
+            <id text="1u4pph21ftepsp_1736044723955" isLine="1">955</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044723955</name>
+            <distance>10.802</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+        </NeighbInfo>
+    </PointInfo>
+    <PointInfo>
+        <id>955</id>
+        <name>1u4pph21ftepsp_1736044723955</name>
+        <pointName>高速区_1u4pph21ftepsp_1736044723955</pointName>
+        <xpos>5.403</xpos>
+        <ypos>-2.337</ypos>
+        <width>000</width>
+        <height>1.000</height>
+        <value text="14" isChargeable="1">14</value>
+        <RoadProperty>1</RoadProperty>
+        <Rot>2</Rot>
+        <alldirRot>0</alldirRot>
+        <allDir>3</allDir>
+        <EleDir>7</EleDir>
+        <ElePre>0</ElePre>
+        <RotRad>0</RotRad>
+        <robottype />
+        <RotUnderPod>1</RotUnderPod>
+        <rotMech>1</rotMech>
+        <ForbidRotWithoutPod />
+        <IsRangePoint />
+        <IsOutPoint />
+        <disabledCarouselRotation>true</disabledCarouselRotation>
+        <evit>1</evit>
+        <rotByRobotType />
+        <exChgRbtType />
+        <rotForPodType />
+        <sensorswitchPoint>1,2,3,4,5,6,7,8</sensorswitchPoint>
+        <ObsShieldLen />
+        <DyInPodOffset />
+        <PalletRecognition>1</PalletRecognition>
+        <RotBarrierArea />
+        <DyInOutCtrl />
+        <IsUpdateMap>2</IsUpdateMap>
+        <WorkDockDist />
+        <TranZoneType priority="3">1</TranZoneType>
+        <ForkWaitPos />
+        <pointOrientations>7</pointOrientations>
+        <dynamicInOutShelving>1</dynamicInOutShelving>
+        <cameraDockingDistance />
+        <obstacleShieldingDistance />
+        <callSite />
+        <affiliatedLocations />
+        <affiliatedDepots />
+        <associatedShelfTypes />
+        <relatedModels />
+        <referenceHeight />
+        <shelfDirection />
+        <ipAddress />
+        <NeighbInfo>
+            <id text="1u4pph21ftepsp_1736044730417" isLine="1">417</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044730417</name>
+            <distance>10.416</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+            <id text="1u4pph21ftepsp_1736044726705" isLine="1">705</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044726705</name>
+            <distance>11.2</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+        </NeighbInfo>
+    </PointInfo>
+    <PointInfo>
+        <id>705</id>
+        <name>1u4pph21ftepsp_1736044726705</name>
+        <pointName>高速区_1u4pph21ftepsp_1736044726705</pointName>
+        <xpos>7.643</xpos>
+        <ypos>-2.35</ypos>
+        <width>000</width>
+        <height>1.000</height>
+        <value text="14" isChargeable="1">14</value>
+        <RoadProperty>1</RoadProperty>
+        <Rot>2</Rot>
+        <alldirRot>0</alldirRot>
+        <allDir>3</allDir>
+        <EleDir>7</EleDir>
+        <ElePre>0</ElePre>
+        <RotRad>0</RotRad>
+        <robottype />
+        <RotUnderPod>1</RotUnderPod>
+        <rotMech>1</rotMech>
+        <ForbidRotWithoutPod />
+        <IsRangePoint />
+        <IsOutPoint />
+        <disabledCarouselRotation>true</disabledCarouselRotation>
+        <evit>1</evit>
+        <rotByRobotType />
+        <exChgRbtType />
+        <rotForPodType />
+        <sensorswitchPoint>1,2,3,4,5,6,7,8</sensorswitchPoint>
+        <ObsShieldLen />
+        <DyInPodOffset />
+        <PalletRecognition>1</PalletRecognition>
+        <RotBarrierArea />
+        <DyInOutCtrl />
+        <IsUpdateMap>2</IsUpdateMap>
+        <WorkDockDist />
+        <TranZoneType priority="3">1</TranZoneType>
+        <ForkWaitPos />
+        <pointOrientations>7</pointOrientations>
+        <dynamicInOutShelving>1</dynamicInOutShelving>
+        <cameraDockingDistance />
+        <obstacleShieldingDistance />
+        <callSite />
+        <affiliatedLocations />
+        <affiliatedDepots />
+        <associatedShelfTypes />
+        <relatedModels />
+        <referenceHeight />
+        <shelfDirection />
+        <ipAddress />
+        <NeighbInfo>
+            <id text="1u4pph21ftepsp_1736044731765" isLine="1">765</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044731765</name>
+            <distance>6</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+        </NeighbInfo>
+    </PointInfo>
+    <PointInfo>
+        <id>417</id>
+        <name>1u4pph21ftepsp_1736044730417</name>
+        <pointName>高速区_1u4pph21ftepsp_1736044730417</pointName>
+        <xpos>3.657</xpos>
+        <ypos>-3.55</ypos>
+        <width>000</width>
+        <height>1.000</height>
+        <value text="14" isChargeable="1">14</value>
+        <RoadProperty>1</RoadProperty>
+        <Rot>2</Rot>
+        <alldirRot>0</alldirRot>
+        <allDir>3</allDir>
+        <EleDir>7</EleDir>
+        <ElePre>0</ElePre>
+        <RotRad>0</RotRad>
+        <robottype />
+        <RotUnderPod>1</RotUnderPod>
+        <rotMech>1</rotMech>
+        <ForbidRotWithoutPod />
+        <IsRangePoint />
+        <IsOutPoint />
+        <disabledCarouselRotation>true</disabledCarouselRotation>
+        <evit>1</evit>
+        <rotByRobotType />
+        <exChgRbtType />
+        <rotForPodType />
+        <sensorswitchPoint>1,2,3,4,5,6,7,8</sensorswitchPoint>
+        <ObsShieldLen />
+        <DyInPodOffset />
+        <PalletRecognition>1</PalletRecognition>
+        <RotBarrierArea />
+        <DyInOutCtrl />
+        <IsUpdateMap>2</IsUpdateMap>
+        <WorkDockDist />
+        <TranZoneType priority="3">1</TranZoneType>
+        <ForkWaitPos />
+        <pointOrientations>7</pointOrientations>
+        <dynamicInOutShelving>1</dynamicInOutShelving>
+        <cameraDockingDistance />
+        <obstacleShieldingDistance />
+        <callSite />
+        <affiliatedLocations />
+        <affiliatedDepots />
+        <associatedShelfTypes />
+        <relatedModels />
+        <referenceHeight />
+        <shelfDirection />
+        <ipAddress />
+        <NeighbInfo>
+            <id text="1u4pph21ftepsp_1736044713551" isLine="1">551</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044713551</name>
+            <distance>6.16</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+            <id text="1u4pph21ftepsp_1736044731156" isLine="1">156</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044731156</name>
+            <distance>10.94</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+            <id text="1u4pph21ftepsp_1736044734550" isLine="1">550</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044734550</name>
+            <distance>6.303</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+            <id text="1u4pph21ftepsp_1736044735157" isLine="1">157</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044735157</name>
+            <distance>13.442</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+        </NeighbInfo>
+    </PointInfo>
+    <PointInfo>
+        <id>156</id>
+        <name>1u4pph21ftepsp_1736044731156</name>
+        <pointName>高速区_1u4pph21ftepsp_1736044731156</pointName>
+        <xpos>5.843</xpos>
+        <ypos>-3.63</ypos>
+        <width>000</width>
+        <height>1.000</height>
+        <value text="14" isChargeable="1">14</value>
+        <RoadProperty>1</RoadProperty>
+        <Rot>2</Rot>
+        <alldirRot>0</alldirRot>
+        <allDir>3</allDir>
+        <EleDir>7</EleDir>
+        <ElePre>0</ElePre>
+        <RotRad>0</RotRad>
+        <robottype />
+        <RotUnderPod>1</RotUnderPod>
+        <rotMech>1</rotMech>
+        <ForbidRotWithoutPod />
+        <IsRangePoint />
+        <IsOutPoint />
+        <disabledCarouselRotation>true</disabledCarouselRotation>
+        <evit>1</evit>
+        <rotByRobotType />
+        <exChgRbtType />
+        <rotForPodType />
+        <sensorswitchPoint>1,2,3,4,5,6,7,8</sensorswitchPoint>
+        <ObsShieldLen />
+        <DyInPodOffset />
+        <PalletRecognition>1</PalletRecognition>
+        <RotBarrierArea />
+        <DyInOutCtrl />
+        <IsUpdateMap>2</IsUpdateMap>
+        <WorkDockDist />
+        <TranZoneType priority="3">1</TranZoneType>
+        <ForkWaitPos />
+        <pointOrientations>7</pointOrientations>
+        <dynamicInOutShelving>1</dynamicInOutShelving>
+        <cameraDockingDistance />
+        <obstacleShieldingDistance />
+        <callSite />
+        <affiliatedLocations />
+        <affiliatedDepots />
+        <associatedShelfTypes />
+        <relatedModels />
+        <referenceHeight />
+        <shelfDirection />
+        <ipAddress />
+        <NeighbInfo>
+            <id text="1u4pph21ftepsp_1736044726705" isLine="1">705</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044726705</name>
+            <distance>10.816</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+            <id text="1u4pph21ftepsp_1736044723955" isLine="1">955</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044723955</name>
+            <distance>6.774</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+            <id text="1u4pph21ftepsp_1736044731765" isLine="1">765</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044731765</name>
+            <distance>8.941</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+            <id text="1u4pph21ftepsp_1736044735157" isLine="1">157</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044735157</name>
+            <distance>5.891</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+        </NeighbInfo>
+    </PointInfo>
+    <PointInfo>
+        <id>765</id>
+        <name>1u4pph21ftepsp_1736044731765</name>
+        <pointName>高速区_1u4pph21ftepsp_1736044731765</pointName>
+        <xpos>7.63</xpos>
+        <ypos>-3.55</ypos>
+        <width>000</width>
+        <height>1.000</height>
+        <value text="14" isChargeable="1">14</value>
+        <RoadProperty>1</RoadProperty>
+        <Rot>2</Rot>
+        <alldirRot>0</alldirRot>
+        <allDir>3</allDir>
+        <EleDir>7</EleDir>
+        <ElePre>0</ElePre>
+        <RotRad>0</RotRad>
+        <robottype />
+        <RotUnderPod>1</RotUnderPod>
+        <rotMech>1</rotMech>
+        <ForbidRotWithoutPod />
+        <IsRangePoint />
+        <IsOutPoint />
+        <disabledCarouselRotation>true</disabledCarouselRotation>
+        <evit>1</evit>
+        <rotByRobotType />
+        <exChgRbtType />
+        <rotForPodType />
+        <sensorswitchPoint>1,2,3,4,5,6,7,8</sensorswitchPoint>
+        <ObsShieldLen />
+        <DyInPodOffset />
+        <PalletRecognition>1</PalletRecognition>
+        <RotBarrierArea />
+        <DyInOutCtrl />
+        <IsUpdateMap>2</IsUpdateMap>
+        <WorkDockDist />
+        <TranZoneType priority="3">1</TranZoneType>
+        <ForkWaitPos />
+        <pointOrientations>7</pointOrientations>
+        <dynamicInOutShelving>1</dynamicInOutShelving>
+        <cameraDockingDistance />
+        <obstacleShieldingDistance />
+        <callSite />
+        <affiliatedLocations />
+        <affiliatedDepots />
+        <associatedShelfTypes />
+        <relatedModels />
+        <referenceHeight />
+        <shelfDirection />
+        <ipAddress />
+        <NeighbInfo>
+            <id text="1u4pph21ftepsp_1736044735711" isLine="1">711</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044735711</name>
+            <distance>6.068</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+            <id text="1u4pph21ftepsp_1736044735157" isLine="1">157</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044735157</name>
+            <distance>9.687</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+        </NeighbInfo>
+    </PointInfo>
+    <PointInfo>
+        <id>550</id>
+        <name>1u4pph21ftepsp_1736044734550</name>
+        <pointName>高速区_1u4pph21ftepsp_1736044734550</pointName>
+        <xpos>3.803</xpos>
+        <ypos>-4.803</ypos>
+        <width>000</width>
+        <height>1.000</height>
+        <value text="14" isChargeable="1">14</value>
+        <RoadProperty>1</RoadProperty>
+        <Rot>2</Rot>
+        <alldirRot>0</alldirRot>
+        <allDir>3</allDir>
+        <EleDir>7</EleDir>
+        <ElePre>0</ElePre>
+        <RotRad>0</RotRad>
+        <robottype />
+        <RotUnderPod>1</RotUnderPod>
+        <rotMech>1</rotMech>
+        <ForbidRotWithoutPod />
+        <IsRangePoint />
+        <IsOutPoint />
+        <disabledCarouselRotation>true</disabledCarouselRotation>
+        <evit>1</evit>
+        <rotByRobotType />
+        <exChgRbtType />
+        <rotForPodType />
+        <sensorswitchPoint>1,2,3,4,5,6,7,8</sensorswitchPoint>
+        <ObsShieldLen />
+        <DyInPodOffset />
+        <PalletRecognition>1</PalletRecognition>
+        <RotBarrierArea />
+        <DyInOutCtrl />
+        <IsUpdateMap>2</IsUpdateMap>
+        <WorkDockDist />
+        <TranZoneType priority="3">1</TranZoneType>
+        <ForkWaitPos />
+        <pointOrientations>7</pointOrientations>
+        <dynamicInOutShelving>1</dynamicInOutShelving>
+        <cameraDockingDistance />
+        <obstacleShieldingDistance />
+        <callSite />
+        <affiliatedLocations />
+        <affiliatedDepots />
+        <associatedShelfTypes />
+        <relatedModels />
+        <referenceHeight />
+        <shelfDirection />
+        <ipAddress />
+    </PointInfo>
+    <PointInfo>
+        <id>157</id>
+        <name>1u4pph21ftepsp_1736044735157</name>
+        <pointName>高速区_1u4pph21ftepsp_1736044735157</pointName>
+        <xpos>6.07</xpos>
+        <ypos>-4.79</ypos>
+        <width>000</width>
+        <height>1.000</height>
+        <value text="14" isChargeable="1">14</value>
+        <RoadProperty>1</RoadProperty>
+        <Rot>2</Rot>
+        <alldirRot>0</alldirRot>
+        <allDir>3</allDir>
+        <EleDir>7</EleDir>
+        <ElePre>0</ElePre>
+        <RotRad>0</RotRad>
+        <robottype />
+        <RotUnderPod>1</RotUnderPod>
+        <rotMech>1</rotMech>
+        <ForbidRotWithoutPod />
+        <IsRangePoint />
+        <IsOutPoint />
+        <disabledCarouselRotation>true</disabledCarouselRotation>
+        <evit>1</evit>
+        <rotByRobotType />
+        <exChgRbtType />
+        <rotForPodType />
+        <sensorswitchPoint>1,2,3,4,5,6,7,8</sensorswitchPoint>
+        <ObsShieldLen />
+        <DyInPodOffset />
+        <PalletRecognition>1</PalletRecognition>
+        <RotBarrierArea />
+        <DyInOutCtrl />
+        <IsUpdateMap>2</IsUpdateMap>
+        <WorkDockDist />
+        <TranZoneType priority="3">1</TranZoneType>
+        <ForkWaitPos />
+        <pointOrientations>7</pointOrientations>
+        <dynamicInOutShelving>1</dynamicInOutShelving>
+        <cameraDockingDistance />
+        <obstacleShieldingDistance />
+        <callSite />
+        <affiliatedLocations />
+        <affiliatedDepots />
+        <associatedShelfTypes />
+        <relatedModels />
+        <referenceHeight />
+        <shelfDirection />
+        <ipAddress />
+        <NeighbInfo>
+            <id text="1u4pph21ftepsp_1736044734550" isLine="1">550</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044734550</name>
+            <distance>11.334</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+            <id text="1u4pph21ftepsp_1736044735711" isLine="1">711</id>
+            <category>1</category>
+            <name>1u4pph21ftepsp_1736044735711</name>
+            <distance>10.213</distance>
+            <Rever>1</Rever>
+            <Speed />
+            <Ultrasonic>0xFFFF</Ultrasonic>
+            <LeftWidth />
+            <RightWidth />
+            <RoadLeftWidth />
+            <RoadRightWidth />
+            <robottype />
+            <PodDir>999</PodDir>
+            <StartDir>666</StartDir>
+            <StopDir>666</StopDir>
+            <AlarmVoice />
+            <PreForkLift>0</PreForkLift>
+            <rotate>2</rotate>
+            <LaserType>1</LaserType>
+            <PodLaserType>1</PodLaserType>
+            <SensorSwitch>1,2,3,4,5,6,7,8</SensorSwitch>
+            <carryType />
+            <ctnrtype />
+            <emptyVehicleSpeed />
+            <backEmptyShelfSpeed />
+            <backToBackRackSpeed />
+            <backfillShelfSpeed />
+            <distanceThreshold />
+            <accessShelfTypes />
+            <CtrlPoint />
+        </NeighbInfo>
+    </PointInfo>
+    <PointInfo>
+        <id>711</id>
+        <name>1u4pph21ftepsp_1736044735711</name>
+        <pointName>高速区_1u4pph21ftepsp_1736044735711</pointName>
+        <xpos>8.11</xpos>
+        <ypos>-4.683</ypos>
+        <width>000</width>
+        <height>1.000</height>
+        <value text="14" isChargeable="1">14</value>
+        <RoadProperty>1</RoadProperty>
+        <Rot>2</Rot>
+        <alldirRot>0</alldirRot>
+        <allDir>3</allDir>
+        <EleDir>7</EleDir>
+        <ElePre>0</ElePre>
+        <RotRad>0</RotRad>
+        <robottype />
+        <RotUnderPod>1</RotUnderPod>
+        <rotMech>1</rotMech>
+        <ForbidRotWithoutPod />
+        <IsRangePoint />
+        <IsOutPoint />
+        <disabledCarouselRotation>true</disabledCarouselRotation>
+        <evit>1</evit>
+        <rotByRobotType />
+        <exChgRbtType />
+        <rotForPodType />
+        <sensorswitchPoint>1,2,3,4,5,6,7,8</sensorswitchPoint>
+        <ObsShieldLen />
+        <DyInPodOffset />
+        <PalletRecognition>1</PalletRecognition>
+        <RotBarrierArea />
+        <DyInOutCtrl />
+        <IsUpdateMap>2</IsUpdateMap>
+        <WorkDockDist />
+        <TranZoneType priority="3">1</TranZoneType>
+        <ForkWaitPos />
+        <pointOrientations>7</pointOrientations>
+        <dynamicInOutShelving>1</dynamicInOutShelving>
+        <cameraDockingDistance />
+        <obstacleShieldingDistance />
+        <callSite />
+        <affiliatedLocations />
+        <affiliatedDepots />
+        <associatedShelfTypes />
+        <relatedModels />
+        <referenceHeight />
+        <shelfDirection />
+        <ipAddress />
+    </PointInfo>
+    <Row>663</Row>
+    <Width>320</Width>
+    <MapQRCode />
+    <MapType>2</MapType>
+</MapCfg>
