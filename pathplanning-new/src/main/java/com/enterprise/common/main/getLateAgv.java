@@ -12,9 +12,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import com.enterprise.common.utils.DatabaseConnection;
+import com.enterprise.common.dao.EdgeDAO;
+
 // 主类
 public class getLateAgv {
     private static Graph graph;  // 改为静态变量
+    private static EdgeDAO edgeDAO = new EdgeDAO();
     
     // 提供静态方法来设置 Graph 实例
     public static void setGraph(Graph g) {
@@ -259,6 +262,30 @@ public class getLateAgv {
 
         double cosTheta = dotProduct / (magnitude1 * magnitude2);
         return Math.abs(cosTheta) < 0.01; // cos(90°) ≈ 0
+    }
+    
+    private static void calculateTravelTime(Path resolvedPath) {
+        List<Node> nodes = resolvedPath.getNodes();
+        for (int i = 0; i < nodes.size() - 1; i++) {
+            Node currentNode = nodes.get(i);
+            Node nextNode = nodes.get(i + 1);
+            Edge edge = edgeDAO.getEdge(currentNode.getId(), nextNode.getId());
+            
+            if (edge != null) {
+                // 计算行驶时间
+                double distance = edge.getLength();
+                double speed = edge.emptyVehicleSpeed > 0 ? edge.emptyVehicleSpeed : 0.5;
+                int travelSeconds = (int) Math.ceil(distance / speed);
+                
+                // 设置到达时间和离开时间
+                if (i == 0) {
+                    currentNode.setDepartureTime(LocalDateTime.now().plusSeconds(1));
+                }
+                LocalDateTime arrivalTime = currentNode.getDepartureTime().plusSeconds(travelSeconds);
+                nextNode.setArrivalTime(arrivalTime);
+                nextNode.setDepartureTime(arrivalTime.plusSeconds(1));
+            }
+        }
     }
 }
 

@@ -2,6 +2,7 @@ package com.enterprise.common.algorithms;
 
 import com.enterprise.common.models.*;
 import com.enterprise.common.utils.DatabaseConnection;
+import com.enterprise.common.dao.EdgeDAO;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -15,6 +16,7 @@ public class ConflictManager {
     private static final int MAX_CONFLICT_NODES = 3; // 最大冲突节点数
     private static final int CLEANUP_INTERVAL = 5000; // 清理间隔（毫秒）
     private static Timer cleanupTimer;
+    private static EdgeDAO edgeDAO = new EdgeDAO();
     
     // 清理过期记录
     private static void cleanExpiredRecords() throws SQLException,Exception {
@@ -71,17 +73,14 @@ public class ConflictManager {
                 for (int i = 0; i < nodes.size() - 1; i++) {
                     Node currentNode = nodes.get(i);
                     Node nextNode = nodes.get(i + 1);
-                    Edge edge = graph.getEdge(currentNode, nextNode);
+                    String edgeId = currentNode.getId() + "_" + nextNode.getId();
                     
-                    if (edge != null) {
-                        String edgeId = currentNode.getId() + "_" + nextNode.getId();
-                        stmt.setString(1, vehicleId);
-                        stmt.setString(2, null);  // 边记录的node_id为null
-                        stmt.setString(3, edge.getId());
-                        stmt.setTimestamp(4, Timestamp.valueOf(currentNode.getDepartureTime()));
-                        stmt.setTimestamp(5, Timestamp.valueOf(nextNode.getArrivalTime()));
-                        stmt.executeUpdate();
-                    }
+                    stmt.setString(1, vehicleId);
+                    stmt.setString(2, null);  // 边记录的node_id为null
+                    stmt.setString(3, edgeId);
+                    stmt.setTimestamp(4, Timestamp.valueOf(currentNode.getDepartureTime()));
+                    stmt.setTimestamp(5, Timestamp.valueOf(nextNode.getArrivalTime()));
+                    stmt.executeUpdate();
                 }
             }
         }
@@ -132,7 +131,7 @@ public class ConflictManager {
         for (String nodeId : unavailableNodes) {
             Node node = tempGraph.getNodeById(nodeId);
             if (node != null) {
-                tempGraph.removeNodeAndEdges(node);
+                tempGraph.removeNode(node);
             }
         }
         
@@ -356,6 +355,18 @@ public class ConflictManager {
                         String currentEdgeId = currentNode.getId() + "_" + nextNode.getId();
                         
                         if (currentEdgeId.equals(edgeId)) {
+                            System.out.println("检测到边冲突：");
+                            System.out.println("- 当前AGV边：" + currentEdgeId);
+                            System.out.println("- 已存在AGV边：" + edgeId);
+                            System.out.println("- 冲突时间区间：" + existingArrival + " -> " + existingDeparture);
+                            // 将边冲突转换为节点冲突（使用边的起始节点）
+                            conflicts.add(new ConflictInfo(currentNode, existingDeparture));
+                            break;
+                        } else if (currentEdgeId.equals(nodeIds[1] + "_" + nodeIds[0])) {
+                            System.out.println("检测到对向行驶冲突：");
+                            System.out.println("- 当前AGV边：" + currentEdgeId);
+                            System.out.println("- 已存在AGV边：" + edgeId);
+                            System.out.println("- 冲突时间区间：" + existingArrival + " -> " + existingDeparture);
                             // 将边冲突转换为节点冲突（使用边的起始节点）
                             conflicts.add(new ConflictInfo(currentNode, existingDeparture));
                             break;
@@ -372,5 +383,31 @@ public class ConflictManager {
         return path.getNodes().stream()
                   .map(Node::getId)
                   .collect(Collectors.joining(" -> "));
+    }
+
+    private static Path calculateTimeWithEdges(Path path) throws Exception {
+        if (path == null || path.getNodes().size() < 2) {
+            return path;
+        }
+
+        List<Node> nodes = path.getNodes();
+        nodes.get(0).setDepartureTime(LocalDateTime.now().plusSeconds(1));
+        
+        for (int i = 1; i < nodes.size(); i++) {
+            Node currentNode = nodes.get(i-1);
+            Node nextNode = nodes.get(i);
+            Edge edge = edgeDAO.getEdge(currentNode.getId(), nextNode.getId());
+            
+            if (edge != null) {
+                double distance = edge.getLength();
+                double speed = edge.emptyVehicleSpeed > 0 ? edge.emptyVehicleSpeed : 0.5;
+                int travelSeconds = (int) Math.ceil(distance / speed);
+                
+                LocalDateTime arrivalTime = currentNode.getDepartureTime().plusSeconds(travelSeconds);
+                nextNode.setArrivalTime(arrivalTime);
+                nextNode.setDepartureTime(arrivalTime.plusSeconds(1));
+            }
+        }
+        return path;
     }
 }
