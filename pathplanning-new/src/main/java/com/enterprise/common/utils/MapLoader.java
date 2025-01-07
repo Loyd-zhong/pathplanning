@@ -55,7 +55,8 @@ public class MapLoader {
                         String toId = idElements.item(k).getTextContent();
                         NodeList reverElements = neighborInfo.getElementsByTagName("Rever");
                         boolean isDirectional = reverElements.getLength() > 0 && 
-                                             (reverElements.item(0).getTextContent().isEmpty() || "0".equals(reverElements.item(0).getTextContent()));
+                                             (reverElements.item(0).getTextContent().isEmpty() || "0".equals(reverElements.item(0).getTextContent())
+                                             ||"1".equals(reverElements.item(0).getTextContent()));
                         
                         double distance = Double.parseDouble(
                             neighborInfo.getElementsByTagName("distance").item(k).getTextContent()
@@ -73,6 +74,8 @@ public class MapLoader {
                                 edge = graph.addCurvedEdge(fromNode, toNode, isDirectional);
                             } else {
                                 edge = graph.addEdge(fromNode, toNode, isDirectional, distance, 1.0);
+                                String edgeId = fromNode.getId() + "_" + toNode.getId();
+                                edge.setId(edgeId);
                             }
                             
                             // 设置四种速度

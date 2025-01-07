@@ -84,6 +84,9 @@ public class Edge {
     public String getId() {
         return id;
     }
+    public void setId(String id) {
+        this.id = id;
+    }
 
     // 新增的时间相关方法
     public void setStartTime(LocalDateTime time) {
