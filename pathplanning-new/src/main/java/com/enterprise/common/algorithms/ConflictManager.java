@@ -75,11 +75,15 @@ public class ConflictManager {
                     Node nextNode = nodes.get(i + 1);
                     String edgeId = currentNode.getId() + "_" + nextNode.getId();
                     
+                    // 计算边的实际通过时间
+                    LocalDateTime edgeStartTime = currentNode.getDepartureTime();
+                    LocalDateTime edgeEndTime = nextNode.getArrivalTime();
+                    
                     stmt.setString(1, vehicleId);
                     stmt.setString(2, null);  // 边记录的node_id为null
                     stmt.setString(3, edgeId);
-                    stmt.setTimestamp(4, Timestamp.valueOf(currentNode.getDepartureTime()));
-                    stmt.setTimestamp(5, Timestamp.valueOf(nextNode.getArrivalTime()));
+                    stmt.setTimestamp(4, Timestamp.valueOf(edgeStartTime));
+                    stmt.setTimestamp(5, Timestamp.valueOf(edgeEndTime));
                     stmt.executeUpdate();
                 }
             }
