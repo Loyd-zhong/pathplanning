@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import com.enterprise.common.utils.DatabaseConnection;
 import com.enterprise.common.dao.EdgeDAO;
+import com.enterprise.common.algorithms.ImprovedConflictManager;
 
 // 主类
 public class getLateAgv {
@@ -162,12 +163,11 @@ public class getLateAgv {
         
         try {
             String tempAgvId = "TEMP_" + System.currentTimeMillis();
-            PathResolution resolution = ConflictManager.resolvePath(
+            PathResolution resolution = ImprovedConflictManager.resolvePath(
                 originalPath,
                 tempAgvId,
                 graph,
-                pathfinder,
-                5
+                pathfinder
             );
             
             // 删除临时记录

@@ -5,7 +5,7 @@ import com.enterprise.common.models.*;
 import com.enterprise.common.utils.MapLoader;
 import com.enterprise.common.utils.DatabaseInitializer;
 import com.enterprise.common.utils.DatabaseConnection;
-import com.enterprise.common.algorithms.ConflictManager;
+import com.enterprise.common.algorithms.ImprovedConflictManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -122,9 +122,9 @@ public class PathVisualizer extends JPanel {
     private void initializeTasks() {
         Color[] colors = {Color.RED, Color.BLUE, Color.GREEN};
         Node[][] tasks = {
-            {graph.getNodeById("2"), graph.getNodeById("6")},
-            {graph.getNodeById("8"), graph.getNodeById("0")},
-            {graph.getNodeById("0"), graph.getNodeById("8")}
+            {graph.getNodeById("6"), graph.getNodeById("0")},
+            {graph.getNodeById("0"), graph.getNodeById("6")},
+            {graph.getNodeById("8"), graph.getNodeById("2")}
         };
         
         LocalDateTime baseTime = LocalDateTime.now();

@@ -5,7 +5,7 @@ import com.enterprise.common.algorithms.AStarPathfinder;
 import com.enterprise.common.algorithms.TimeWindowManager;
 import com.enterprise.common.dao.PathDAO;
 import com.enterprise.common.dao.VehiclePassageDAO;
-import com.enterprise.common.algorithms.ConflictManager;
+import com.enterprise.common.algorithms.ImprovedConflictManager;
 import com.enterprise.common.models.PathResolution;
 import com.enterprise.common.models.PathResolutionStatus;
 import java.awt.*;
@@ -400,7 +400,7 @@ public class AGV {
         }
         
         try {
-            PathResolution resolution = ConflictManager.handleMaxRetries(
+            PathResolution resolution = ImprovedConflictManager.resolvePath(
                 currentPath,
                 this.agvId,
                 graph,
@@ -435,10 +435,10 @@ public class AGV {
     // 在AGV类的开头添加静态初始化块
     static {
         try {
-            Class.forName("com.enterprise.common.algorithms.ConflictManager");
-            System.out.println("ConflictManager类已成功加载");
+            Class.forName("com.enterprise.common.algorithms.ImprovedConflictManager");
+            System.out.println("ImprovedConflictManager类已成功加载");
         } catch (ClassNotFoundException e) {
-            System.err.println("无法加载ConflictManager类: " + e.getMessage());
+            System.err.println("无法加载ImprovedConflictManager类: " + e.getMessage());
             e.printStackTrace();
         }
     }
