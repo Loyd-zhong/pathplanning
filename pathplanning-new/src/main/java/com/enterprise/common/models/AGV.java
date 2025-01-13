@@ -116,14 +116,15 @@ public class AGV {
                         default:
                             speed = Defaultspeed;
                     }
+                    
+                    
                 } else {
                     System.out.println("警告: 未找到边 " + edgeId + " 的速度数据");
                 }
                 
                 System.out.println("最终使用速度: " + speed);
                 System.out.println("------------------------");
-                
-                return speed;
+                return Math.min(speed, Defaultspeed);
                 
             } catch (SQLException e) {
                 System.err.println("获取边速度失败: " + e.getMessage());
