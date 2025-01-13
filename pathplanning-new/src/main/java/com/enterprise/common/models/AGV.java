@@ -156,8 +156,12 @@ public class AGV {
 
             // 计算边的通过时间
             double distance = calculateDistance(currentNode, nextNode);
-            double timeNeeded = calculateTimeNeeded(distance, getSpeedByStateAndNodes(state, currentNode, nextNode));
-            if (lastNode != null &&isTurn(lastNode,currentNode,nextNode)) {
+            double speed = getSpeedByStateAndNodes(state, currentNode, nextNode);
+            // 设置当前节点的出发速度
+            path.setNodeDepartureSpeed(currentNode.getId(), speed);
+            
+            double timeNeeded = calculateTimeNeeded(distance, speed);
+            if (lastNode != null && isTurn(lastNode,currentNode,nextNode)) {
                 timeNeeded=timeNeeded+turnTime;
                 System.out.println("节点"+currentNode.getId()+"需要转弯，添加转弯时间"+agvType.turnTime+"秒");
             }
@@ -165,7 +169,7 @@ public class AGV {
             System.out.println("当前节点: " + currentNode.getId());
             System.out.println("下一节点: " + nextNode.getId());
             System.out.println("距离: " + distance);
-            System.out.println("速度: " + getSpeedByStateAndNodes(state, currentNode, nextNode));
+            System.out.println("速度: " + speed);
             System.out.println("预计用时: " + timeNeeded + "秒");
             System.out.println("========================");
             
@@ -176,6 +180,11 @@ public class AGV {
             
             // 更新下一段路径的开始时间
             nextArrivalTime = nextNode.getDepartureTime();
+        }
+        
+        // 设置终点节点的出发速度为0
+        if (!nodes.isEmpty()) {
+            path.setNodeDepartureSpeed(nodes.get(nodes.size() - 1).getId(), 0.0);
         }
     }
 

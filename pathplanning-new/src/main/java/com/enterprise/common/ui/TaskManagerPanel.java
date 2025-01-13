@@ -4,6 +4,7 @@ import com.enterprise.common.models.AGV;
 import com.enterprise.common.models.NetworkState;
 import com.enterprise.common.models.PassRecord;
 import com.enterprise.common.models.Node;
+import com.enterprise.common.models.Path;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -45,12 +46,13 @@ public class TaskManagerPanel extends JPanel {
         StringBuilder info = new StringBuilder();
         for (int i = 0; i < agvs.size(); i++) {
             AGV agv = agvs.get(i);
-            Node startNode = agv.getCurrentPath().getNodes().get(0);
-            Node goalNode = agv.getCurrentPath().getNodes().get(agv.getCurrentPath().getNodes().size() - 1);
+            Path currentPath = agv.getCurrentPath();
+            Node startNode = currentPath.getNodes().get(0);
+            Node goalNode = currentPath.getNodes().get(currentPath.getNodes().size() - 1);
             info.append("AGV ").append(i + 1).append(": Start -> ")
-                    .append(formatNodeWithId(startNode)).append(", Goal -> ")
-                    .append(formatNodeWithId(goalNode)).append("\n");
-            info.append("Path: ").append(formatPathWithIds(agv.getCurrentPath().getNodes())).append("\n\n");
+                    .append(formatNodeWithId(startNode, currentPath)).append(", Goal -> ")
+                    .append(formatNodeWithId(goalNode, currentPath)).append("\n");
+            info.append("Path: ").append(formatPathWithIds(currentPath.getNodes(), currentPath)).append("\n\n");
         }
         taskInfoArea.setText(info.toString());
     }
@@ -69,14 +71,15 @@ public class TaskManagerPanel extends JPanel {
         tableModel.fireTableDataChanged(); // 通知表格模型数据已更新
     }
 
-    private String formatNodeWithId(Node node) {
-        return String.format("(id: %s, %.3f, %.3f at %s)", 
-            node.getId(), node.getX(), node.getY(), node.getArrivalTime());
+    private String formatNodeWithId(Node node, Path path) {
+        double speed = path.getNodeDepartureSpeed(node.getId());
+        return String.format("(id: %s, %.3f, %.3f at %s, speed: %.2f)", 
+            node.getId(), node.getX(), node.getY(), node.getArrivalTime(), speed);
     }
 
-    private String formatPathWithIds(List<Node> nodes) {
+    private String formatPathWithIds(List<Node> nodes, Path path) {
         return nodes.stream()
-            .map(this::formatNodeWithId)
+            .map(node -> formatNodeWithId(node, path))
             .collect(Collectors.joining(", "));
     }
 }
