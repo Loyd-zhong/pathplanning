@@ -191,7 +191,7 @@ public class getLateAgv {
                     
                     // 计算行驶时间
                     double distance = edge.getLength();
-                    double speed = 0.5; // 使用默认速度
+                    double speed = edge.emptyVehicleSpeed; // 使用空车速度
                     int travelSeconds = (int) Math.ceil(distance / speed);
                     
                     // 加上行驶时间
@@ -286,6 +286,101 @@ public class getLateAgv {
                 nextNode.setDepartureTime(arrivalTime.plusSeconds(1));
             }
         }
+    }
+    
+    // 寻找最近的停车点
+    public String findNearestParkingSpot(String currentNodeId, List<String> parkingSpots) throws IllegalArgumentException {
+        // 参数验证
+        if (parkingSpots == null || parkingSpots.isEmpty()) {
+            throw new IllegalArgumentException("泊车点列表为空，无法进行泊车");
+        }
+
+        // 获取当前节点
+        Node currentNode = graph.getNodeById(currentNodeId);
+        if (currentNode == null) {
+            throw new IllegalArgumentException("无效的当前节点ID");
+        }
+
+        // 检查当前位置是否为停车点
+        if (parkingSpots.contains(currentNodeId)) {
+            return currentNodeId;
+        }
+
+        // 按象限分类停车点
+        Map<Integer, List<String>> quadrantParkingSpots = new HashMap<>();
+        for (int i = 1; i <= 4; i++) {
+            quadrantParkingSpots.put(i, new ArrayList<>());
+        }
+
+        // 将停车点分配到各个象限
+        for (String spotId : parkingSpots) {
+            Node spotNode = graph.getNodeById(spotId);
+            if (spotNode != null) {
+                int quadrant = getQuadrant(currentNode, spotNode);
+                quadrantParkingSpots.get(quadrant).add(spotId);
+            }
+        }
+
+        // 在每个象限中找到最近的停车点
+        Map<Integer, String> nearestSpots = new HashMap<>();
+        for (int quadrant = 1; quadrant <= 4; quadrant++) {
+            String nearest = findNearestSpotInQuadrant(currentNode, quadrantParkingSpots.get(quadrant));
+            if (nearest != null) {
+                nearestSpots.put(quadrant, nearest);
+            }
+        }
+
+        // 如果没有找到任何候选点
+        if (nearestSpots.isEmpty()) {
+            throw new IllegalArgumentException("找不到有效路径到任何泊车点，无法进行泊车");
+        }
+
+        // 对候选点进行路径规划，选择耗时最短的
+        String bestSpot = null;
+        long shortestTime = Long.MAX_VALUE;
+
+        for (String spotId : nearestSpots.values()) {
+            Node spotNode = graph.getNodeById(spotId);
+            long pathTime = calculatePathTime(currentNode, spotNode);
+            if (pathTime < shortestTime) {
+                shortestTime = pathTime;
+                bestSpot = spotId;
+            }
+        }
+
+        if (bestSpot == null) {
+            throw new IllegalArgumentException("找不到有效路径到任何泊车点，无法进行泊车");
+        }
+
+        return bestSpot;
+    }
+
+    // 在指定象限中找到最近的停车点（使用欧几里得距离）
+    private String findNearestSpotInQuadrant(Node currentNode, List<String> spots) {
+        if (spots.isEmpty()) {
+            return null;
+        }
+
+        String nearestSpot = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for (String spotId : spots) {
+            Node spotNode = graph.getNodeById(spotId);
+            if (spotNode != null) {
+                // 使用欧几里得距离
+                double distance = Math.sqrt(
+                    Math.pow(spotNode.getX() - currentNode.getX(), 2) +
+                    Math.pow(spotNode.getY() - currentNode.getY(), 2)
+                );
+
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestSpot = spotId;
+                }
+            }
+        }
+
+        return nearestSpot;
     }
 }
 

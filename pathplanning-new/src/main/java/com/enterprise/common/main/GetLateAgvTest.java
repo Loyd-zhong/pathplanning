@@ -5,23 +5,81 @@ import com.enterprise.common.models.*;
 import com.enterprise.common.utils.MapLoader;
 import java.util.ArrayList;
 import java.util.List;
-import com.enterprise.common.models.AgvNodeVo;
+
 public class GetLateAgvTest {
     public static void main(String[] args) {
         // 1. 初始化 Graph
-        String xmlFilePath = "D:/AGV规划系统（4.25启动）/路径规划算法代码/pathplanning-good/pathplanning-new/src/main/java/com/enterprise/common/resources/新建文本文档 (4).xml";  // 替换为实际的地图文件路径
+        String xmlFilePath ="pathplanning-new\\src\\main\\java\\com\\enterprise\\common\\resources\\海康冲突算法.xml";
         Graph graph = MapLoader.loadMap(xmlFilePath);
         getLateAgv.setGraph(graph);
         
-        // 2. 创建测试用的 AGV 列表
+        // 2. 测试寻找最近停车点
+        System.out.println("\n开始测试寻找最近停车点功能...");
+        testFindNearestParkingSpot();
+        
+        // 3. 测试获取最近AGV（原有功能）
+        //System.out.println("\n开始测试获取最近AGV功能...");
+        //testGetLateAgv();
+    }
+    
+    private static void testFindNearestParkingSpot() {
+        getLateAgv finder = new getLateAgv();
+        
+        // 创建测试用的停车点列表
+        List<String> parkingSpots = new ArrayList<>();
+        parkingSpots.add("6");
+        parkingSpots.add("4");
+        parkingSpots.add("0");
+        parkingSpots.add("8");
+        parkingSpots.add("5");
+        
+        // 测试用例1：正常情况
+        try {
+            String agvPosition = "1";  // AGV当前位置
+            System.out.println("测试用例1 - AGV在节点" + agvPosition);
+            String nearestSpot = finder.findNearestParkingSpot(agvPosition, parkingSpots);
+            System.out.println("找到最近的停车点: " + nearestSpot);
+        } catch (IllegalArgumentException e) {
+            System.out.println("测试用例1失败: " + e.getMessage());
+        }
+        
+        // 测试用例2：AGV当前位置就是停车点
+        try {
+            String agvPosition = "4";  // AGV当前位置（是停车点之一）
+            System.out.println("\n测试用例2 - AGV在停车点" + agvPosition);
+            String nearestSpot = finder.findNearestParkingSpot(agvPosition, parkingSpots);
+            System.out.println("返回当前位置作为停车点: " + nearestSpot);
+        } catch (IllegalArgumentException e) {
+            System.out.println("测试用例2失败: " + e.getMessage());
+        }
+        
+        // 测试用例3：空停车点列表
+        try {
+            String agvPosition = "118";
+            System.out.println("\n测试用例3 - 空停车点列表");
+            String nearestSpot = finder.findNearestParkingSpot(agvPosition, new ArrayList<>());
+            System.out.println("结果: " + nearestSpot);
+        } catch (IllegalArgumentException e) {
+            System.out.println("测试用例3预期异常: " + e.getMessage());
+        }
+        
+        // 测试用例4：无效的AGV位置
+        try {
+            String agvPosition = "999999";  // 不存在的节点ID
+            System.out.println("\n测试用例4 - 无效的AGV位置");
+            String nearestSpot = finder.findNearestParkingSpot(agvPosition, parkingSpots);
+            System.out.println("结果: " + nearestSpot);
+        } catch (IllegalArgumentException e) {
+            System.out.println("测试用例4预期异常: " + e.getMessage());
+        }
+    }
+    
+    /*private static void testGetLateAgv() {
+        // 创建测试用的 AGV 列表
         List<AgvNodeVo> testAgvs = new ArrayList<>();
         
-        // 添加20个测试用的 AGV，分布在不同的节点
         testAgvs.add(new AgvNodeVo(1L, "696", null));
-        //testAgvs.add(new AgvNodeVo(2L, "474", null));
         testAgvs.add(new AgvNodeVo(3L, "056", null));
-        //testAgvs.add(new AgvNodeVo(4L, "826", null));
-        //testAgvs.add(new AgvNodeVo(5L, "532", null));
         testAgvs.add(new AgvNodeVo(6L, "708", null));
         testAgvs.add(new AgvNodeVo(7L, "590", null));
         testAgvs.add(new AgvNodeVo(8L, "236", null));
@@ -31,18 +89,16 @@ public class GetLateAgvTest {
         testAgvs.add(new AgvNodeVo(12L, "472", null));
         testAgvs.add(new AgvNodeVo(13L, "590", null));
         testAgvs.add(new AgvNodeVo(14L, "708", null));
-        //testAgvs.add(new AgvNodeVo(15L, "826", null));
         testAgvs.add(new AgvNodeVo(16L, "944", null));
         testAgvs.add(new AgvNodeVo(17L, "118", null));
         testAgvs.add(new AgvNodeVo(18L, "236", null));
         testAgvs.add(new AgvNodeVo(19L, "354", null));
         testAgvs.add(new AgvNodeVo(20L, "472", null));
         
-        // 3. 测试获取最近 AGV
+        // 测试获取最近 AGV
         getLateAgv finder = new getLateAgv();
         String targetNode = "532";  // 目标节点
         
-        System.out.println("开始测试获取最近AGV...");
         System.out.println("目标节点: " + targetNode);
         System.out.println("可用AGV数量: " + testAgvs.size());
         
@@ -66,5 +122,5 @@ public class GetLateAgvTest {
         } else {
             System.out.println("\n未找到合适的AGV");
         }
-    }
+    }*/
 }
