@@ -27,6 +27,7 @@ public class EdgeDAO {
                     edge.backEmptyShelfSpeed = rs.getDouble("back_empty_shelf_speed");
                     edge.backToBackRackSpeed = rs.getDouble("back_to_back_rack_speed");
                     edge.backfillShelfSpeed = rs.getDouble("backfill_shelf_speed");
+                    edge.setDisplaced(rs.getInt("displaced"));
                     return edge;
                 }
             }
@@ -34,5 +35,20 @@ public class EdgeDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public boolean updateDisplaced(String fromNodeId, String toNodeId, int displaced) {
+        String edgeId = fromNodeId + "_" + toNodeId;
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "UPDATE edges SET displaced = ? WHERE edge_id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, displaced);
+                stmt.setString(2, edgeId);
+                return stmt.executeUpdate() > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 } 

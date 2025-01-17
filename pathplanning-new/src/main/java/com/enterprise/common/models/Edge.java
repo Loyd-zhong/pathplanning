@@ -17,6 +17,8 @@ public class Edge {
     public double backEmptyShelfSpeed;
     public double backToBackRackSpeed;
     public double backfillShelfSpeed;
+    private int displaced = 0; // 新增：边的禁用状态，0表示可用，1表示禁用
+
     // 构造函数，增加长度和是否为弧线的标志
     public Edge(Node from, Node to, boolean isDirectional, boolean isCurved, double length) {
         this.from = from;
@@ -120,5 +122,13 @@ public class Edge {
 
     public void setWeight(double weight) {
         this.weight = weight;
+    }
+
+    public int getDisplaced() {
+        return displaced;
+    }
+
+    public void setDisplaced(int displaced) {
+        this.displaced = displaced;
     }
 }

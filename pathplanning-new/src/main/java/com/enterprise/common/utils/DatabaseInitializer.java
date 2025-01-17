@@ -38,6 +38,7 @@ public class DatabaseInitializer {
             "    back_empty_shelf_speed DOUBLE DEFAULT " +AGV.Defaultspeed +"," +
             "    back_to_back_rack_speed DOUBLE DEFAULT " +AGV.Defaultspeed +"," +
             "    backfill_shelf_speed DOUBLE DEFAULT " +AGV.Defaultspeed +"," +
+            "    displaced INT DEFAULT 0," +
             "    FOREIGN KEY (from_node_id) REFERENCES Nodes(node_id)," +
             "    FOREIGN KEY (to_node_id) REFERENCES Nodes(node_id)," +
             "    UNIQUE KEY unique_edge (from_node_id, to_node_id)" +

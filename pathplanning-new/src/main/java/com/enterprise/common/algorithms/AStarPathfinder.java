@@ -45,7 +45,7 @@ public class AStarPathfinder {
             // 逐一检查当前节点的所有连接的边，确保路径遵循图中的边
             for (Edge edge : graph.getEdges(current)) {
                 Node neighbor = edge.getOpposite(current);
-                if (neighbor == null || !edge.canTraverse(current, neighbor)) {
+                if (neighbor == null || !edge.canTraverse(current, neighbor) || edge.getDisplaced() == 1) {
                     continue;
                 }
                 if (closedSet.contains(neighbor)) continue;
